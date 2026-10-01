@@ -1,88 +1,179 @@
 <!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#070a0f">
-<title>Turbo WP Skins Tool — Turbo Designs</title>
-<meta name="description" content="FiveM Weapon Skins schneller erstellen. Pistol, Pistol MK2 und Pistol .50 gestalten, previewen und als .rpf exportieren.">
-<meta property="og:title" content="Turbo WP Skins Tool">
-<meta property="og:description" content="Presets, eigene Farben, Logos, Preview und .rpf Export für FiveM.">
-<meta property="og:image" content="https://wp-skins-turbodesigns.com/turbo-banner.jpg">
-<meta property="og:url" content="https://wp-skins-turbodesigns.com">
-<meta property="og:type" content="website">
-<link rel="icon" href="turbo-logo.jpg">
-<link rel="apple-touch-icon" href="turbo-logo.jpg">
-<style>
-:root{color-scheme:dark;--bg:#070a0f;--panel:#0c1118;--panel2:#111822;--text:#f3f7fb;--muted:#8b99aa;--line:#1d2631;--line2:#2a3948;--blue:#4aaeff;--blue2:#83cbff;--green:#78dfa9;--max:1180px}
-*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:84px}body{margin:0;background:radial-gradient(900px 460px at 82% -10%,rgba(42,132,222,.14),transparent 62%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}body.menu-open{overflow:hidden}img{display:block;max-width:100%}a{color:inherit}button{font:inherit}a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--blue2);outline-offset:3px}.wrap{width:min(calc(100% - 32px),var(--max));margin:auto}.section{padding:82px 0;border-top:1px solid var(--line)}.kicker{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue2)}h1,h2,h3,p{margin:0}h1{font-size:clamp(50px,7vw,88px);line-height:.95;letter-spacing:-.05em}h2{font-size:clamp(34px,4.5vw,54px);line-height:1;letter-spacing:-.035em}h3{font-size:24px;line-height:1.08;letter-spacing:-.02em}.muted{color:var(--muted)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:0 18px;border-radius:12px;border:1px solid var(--line2);background:#111821;color:var(--text);font-weight:750;text-decoration:none;cursor:pointer;transition:.18s ease}.btn:hover{transform:translateY(-1px);border-color:#496177;background:#151e29}.btn:active{transform:translateY(0)}.btn.primary{border-color:transparent;background:linear-gradient(180deg,#59b4ff,#3398ee);color:#06111b;box-shadow:0 12px 30px rgba(52,153,238,.18)}.btn.primary:hover{background:linear-gradient(180deg,#6abfff,#40a3f7)}.btn.ghost{background:transparent}.btn.wide{min-width:220px}
-header{position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(7,10,15,.84);backdrop-filter:blur(18px)}.nav{height:72px;display:flex;align-items:center;gap:24px}.brand{display:flex;align-items:center;gap:11px;text-decoration:none}.brand img{width:42px;height:42px;border-radius:11px;object-fit:cover;border:1px solid var(--line2)}.brand-copy{line-height:1}.brand-copy b{display:block;font-size:17px}.brand-copy span{display:block;color:var(--muted);font-size:10px;letter-spacing:.08em;margin-top:5px}nav{margin-left:auto;display:flex;align-items:center;gap:22px}nav a{font-size:14px;font-weight:650;color:#a7b2bf;text-decoration:none}nav a:hover{color:#fff}.menu-btn{display:none;margin-left:auto;width:44px;height:44px;border:1px solid var(--line2);border-radius:11px;background:#10151d;color:white}.mobile-menu{display:none;position:fixed;inset:73px 0 0;z-index:45;background:#080c12;padding:16px}.mobile-menu.open{display:block}.mobile-menu a{display:block;padding:17px;border-bottom:1px solid var(--line);font-weight:750;text-decoration:none}
-.hero{padding:58px 0 72px}.hero-grid{display:grid;grid-template-columns:1.03fr .97fr;gap:46px;align-items:center}.hero .kicker{margin-bottom:16px}.hero h1 span{color:var(--blue2)}.hero p{max-width:650px;margin-top:22px;color:#a2adbb;font-size:18px;line-height:1.65}.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}.fact{padding:7px 10px;border:1px solid var(--line);border-radius:999px;color:#9ba9ba;font-size:12px;font-weight:650}.hero-media{position:relative;aspect-ratio:4/3;border-radius:22px;overflow:hidden;border:1px solid var(--line2);background:#0a1018;box-shadow:0 32px 70px rgba(0,0,0,.34)}.hero-media>img{width:100%;height:100%;object-fit:cover}.hero-media:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 52%,rgba(5,8,12,.9))}.hero-meta{position:absolute;z-index:2;left:20px;right:20px;bottom:18px;display:flex;align-items:flex-end;justify-content:space-between;gap:18px}.hero-meta h3{font-size:27px}.hero-meta p{font-size:13px;margin:5px 0 0;color:#c2cedb}.price{font-size:32px;font-weight:850;white-space:nowrap}.price small{display:block;text-align:right;color:#8fa0b3;font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px}
-.section-head{display:grid;grid-template-columns:1fr minmax(280px,470px);gap:32px;align-items:end;margin-bottom:28px}.section-head .kicker{margin-bottom:10px}.section-head p{color:var(--muted);line-height:1.7}.showcase{display:grid;grid-template-columns:1.3fr .7fr .7fr;grid-template-rows:1fr 1fr;gap:14px}.skin{position:relative;overflow:hidden;border-radius:18px;border:1px solid var(--line);background:#0c121a;min-height:230px}.skin.main{grid-row:1/3;min-height:520px}.skin img{width:100%;height:100%;object-fit:contain;padding:18px;background:radial-gradient(circle at center,#18283a 0,#0c121a 55%,#090d13 100%);transition:transform .35s ease}.skin:hover img{transform:scale(1.035)}.skin .caption{position:absolute;left:14px;right:14px;bottom:14px;padding:11px 12px;border-radius:11px;background:rgba(5,8,12,.8);border:1px solid rgba(255,255,255,.07);backdrop-filter:blur(10px)}.skin .caption span{display:block;color:var(--blue2);font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.skin .caption b{display:block;margin-top:3px;font-size:17px}
-.editor{display:grid;grid-template-columns:1.25fr .75fr;gap:28px;align-items:center}.editor-shot{border:1px solid var(--line2);border-radius:20px;overflow:hidden;background:#0b1118;box-shadow:0 24px 64px rgba(0,0,0,.26)}.editor-shot img{width:100%}.editor-copy .kicker{margin-bottom:10px}.editor-copy p{margin-top:16px;color:var(--muted);line-height:1.7}.mini-list{display:grid;gap:9px;margin-top:22px}.mini-item{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--line)}.mini-item:last-child{border-bottom:0}.mini-icon{width:29px;height:29px;display:grid;place-items:center;border-radius:8px;background:#10263a;color:var(--blue2);font-size:11px;font-weight:850}.mini-item b{font-size:14px}.mini-item span{display:block;color:#7f8d9f;font-size:12px;margin-top:2px}
-.weapon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.weapon{padding:24px;border:1px solid var(--line);border-radius:18px;background:#0c1118;transition:.18s ease}.weapon:hover{transform:translateY(-2px);border-color:#304154;background:#0e151e}.weapon .status{font-size:10px;color:var(--green);font-weight:800;text-transform:uppercase;letter-spacing:.1em}.weapon h3{margin-top:28px;font-size:30px}.weapon p{margin-top:9px;color:var(--muted);font-size:14px;line-height:1.6}.weapon .mono{display:inline-block;margin-top:23px;padding:6px 8px;border-radius:7px;background:#080b10;border:1px solid var(--line);color:#7e8a99;font:11px ui-monospace,SFMono-Regular,Menlo,monospace}.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.feature{padding:22px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#0d131b,#090d12);min-height:160px;transition:.18s ease}.feature:hover{transform:translateY(-2px);border-color:#304154;background:linear-gradient(180deg,#101821,#0a0f15)}.feature .no{font:700 11px ui-monospace,SFMono-Regular,Menlo,monospace;color:#516275}.feature h3{margin-top:25px}.feature p{margin-top:9px;color:var(--muted);font-size:14px;line-height:1.6}
-.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid var(--line);border-radius:18px;overflow:hidden}.flow-step{padding:22px;min-height:150px;background:#0b1017;border-right:1px solid var(--line)}.flow-step:last-child{border-right:0}.flow-step span{font:700 11px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--blue2)}.flow-step b{display:block;margin-top:23px}.flow-step p{margin-top:6px;color:#7f8d9f;font-size:12px;line-height:1.55}.system{display:grid;grid-template-columns:.85fr 1.15fr;gap:18px}.system-card{padding:25px;border:1px solid var(--line);border-radius:18px;background:#0b1017;transition:.18s ease}.system-card:hover{border-color:#304154}.system-card h3{font-size:28px;margin-top:8px}.specs{margin-top:20px}.spec{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid var(--line);font-size:13px}.spec:last-child{border-bottom:0}.spec span{color:var(--muted)}.spec b{text-align:right}code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#a7d7ff;font-size:12px;word-break:break-all}
-.buy{display:grid;grid-template-columns:.8fr 1.2fr;border:1px solid #2a394b;border-radius:22px;overflow:hidden;background:#0b1017;box-shadow:0 28px 70px rgba(0,0,0,.28)}.buy-left{padding:32px;border-right:1px solid var(--line)}.buy-left .kicker{margin-bottom:14px}.buy-left .big-price{font-size:clamp(58px,7vw,84px);font-weight:880;letter-spacing:-.05em;line-height:.9}.buy-left .sub{margin-top:13px;color:var(--muted);font-size:14px}.version{display:flex;gap:8px;flex-wrap:wrap;margin-top:25px}.version span{padding:6px 8px;border-radius:7px;border:1px solid var(--line);font:11px ui-monospace,SFMono-Regular,Menlo,monospace;color:#7f8ea0}.buy-right{padding:32px}.included{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;margin:24px 0 28px}.included div{font-size:14px;color:#cbd4df}.included div:before{content:"✓";color:var(--green);font-weight:900;margin-right:8px}.buy-actions{display:flex;gap:10px;flex-wrap:wrap}.contact-line{margin-top:16px;color:#758497;font-size:12px}.faq{display:grid;grid-template-columns:1fr 1fr;gap:12px}details{padding:18px;border:1px solid var(--line);border-radius:14px;background:#0b1017}summary{cursor:pointer;font-weight:750;list-style:none;padding-right:28px;position:relative}summary::-webkit-details-marker{display:none}summary:after{content:"+";position:absolute;right:0;color:var(--blue2)}details[open] summary:after{content:"−"}details p{margin-top:10px;color:var(--muted);font-size:14px;line-height:1.65}
-.modal{position:fixed;inset:0;z-index:100;display:none;place-items:center;padding:20px;background:rgba(3,5,8,.8);backdrop-filter:blur(10px)}.modal.open{display:grid}.modal-card{width:min(100%,480px);border:1px solid var(--line2);border-radius:18px;background:#0d131b;padding:24px;box-shadow:0 30px 90px #000}.modal-card h3{font-size:30px;margin-top:10px}.modal-card p{margin-top:10px;color:var(--muted);font-size:14px;line-height:1.7}.modal-actions{display:grid;gap:9px;margin-top:22px}.modal-actions .btn{width:100%}.showcase-hint{display:none;margin-top:12px;color:#6f7f91;font-size:11px;text-align:right}footer{padding:34px 0 44px;border-top:1px solid var(--line)}.footer-row{display:flex;align-items:center;justify-content:space-between;gap:22px}.footer-links{display:flex;gap:16px;flex-wrap:wrap}.footer-links a{color:#748294;font-size:12px;text-decoration:none}.footer-links a:hover{color:#fff}.copyright{margin-top:22px;color:#4f5d6c;font-size:11px}
-@media(max-width:1000px){nav{display:none}.menu-btn{display:block}.hero-grid,.editor,.system,.buy{grid-template-columns:1fr}.buy-left{border-right:0;border-bottom:1px solid var(--line)}.showcase{grid-template-columns:1fr 1fr;grid-template-rows:auto}.skin.main{grid-row:auto;grid-column:1/3;min-height:420px}.flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line);min-height:auto}.flow-step:last-child{border-bottom:0}}
-@media(max-width:700px){.wrap{width:min(calc(100% - 22px),var(--max))}.section{padding:58px 0}.hero{padding:34px 0 52px}.hero-grid{gap:28px}.hero p{font-size:16px}.hero-actions .btn{width:100%}.hero-media{aspect-ratio:16/10}.hero-meta{align-items:flex-start;flex-direction:column}.price{font-size:28px}.price small{text-align:left}.section-head{grid-template-columns:1fr;gap:14px}.showcase{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:5px}.skin,.skin.main{min-width:84%;min-height:340px;grid-column:auto;scroll-snap-align:center}.showcase-hint{display:block}.weapon-grid,.features,.faq{grid-template-columns:1fr}.included{grid-template-columns:1fr}.buy-actions{display:grid}.buy-actions .btn{width:100%;min-width:0}.footer-row{align-items:flex-start;flex-direction:column}.buy-left,.buy-right{padding:24px}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070b">
+  <meta name="description" content="Turbo Designs Creator Suite – Soundpack Creator und Weapon Skin Creator für FiveM und GTA V.">
+  <title>Turbo Designs — Creator Suite</title>
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-<header><div class="wrap nav"><a class="brand" href="#top"><img src="turbo-logo.jpg" alt="Turbo Designs"><span class="brand-copy"><b>Turbo Designs</b><span>WP SKINS TOOL</span></span></a><nav><a href="#showcase">Showcase</a><a href="#tool">Tool</a><a href="#weapons">Waffen</a><a href="#features">Features</a><a href="#faq">FAQ</a><a class="btn primary" data-discord href="https://discord.gg/turbodesigns">Kaufen</a></nav><button class="menu-btn" id="menuBtn" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobileMenu">☰</button></div></header>
-<div class="mobile-menu" id="mobileMenu" aria-hidden="true"><a href="#showcase">Showcase</a><a href="#tool">Tool</a><a href="#weapons">Waffen</a><a href="#features">Features</a><a data-discord href="https://discord.gg/turbodesigns">Kaufen · 14,99 €</a><a href="#faq">FAQ</a></div>
-<main id="top">
-<section class="hero"><div class="wrap hero-grid"><div><div class="kicker">FiveM Weapon Skin Tool</div><h1>Weapon Skins.<br><span>Ohne Umwege.</span></h1><p>Preset auswählen, Farben und Logo anpassen, Ergebnis prüfen und als <strong>.rpf</strong> exportieren. Gebaut für Pistol, Pistol MK2 und Pistol .50.</p><div class="hero-actions"><a class="btn primary wide" data-discord href="https://discord.gg/turbodesigns">Über Discord kaufen · 14,99 €</a><a class="btn ghost" href="#tool">Tool ansehen</a></div><div class="facts"><span class="fact">Windows</span><span class="fact">Einmalkauf</span><span class="fact">3 Waffen</span><span class="fact">RPF Export</span></div></div><div class="hero-media"><img src="turbo-banner.jpg" alt="Turbo WP Skins Tool"><div class="hero-meta"><div><h3>Turbo WP Skins Tool</h3><p>by Turbo Designs</p></div><div class="price"><small>Einmalig</small><span data-price>14,99 €</span></div></div></div></div></section>
-<section class="section" id="showcase"><div class="wrap"><div class="section-head"><div><div class="kicker">Showcase</div><h2>Presets als Startpunkt.</h2></div><p>Ein paar Looks, die zeigen, in welche Richtung du gehen kannst. Danach passt du Farben, Logo und Stil selbst an.</p></div><div class="showcase"><article class="skin main"><img loading="lazy" decoding="async" src="mk2_gold_chain.webp" alt="Pistol MK2 Gold Chain"><div class="caption"><span>Pistol MK2</span><b>Gold Chain</b></div></article><article class="skin"><img loading="lazy" decoding="async" src="mk2_redchrome.webp" alt="Pistol MK2 Red Chrome"><div class="caption"><span>Pistol MK2</span><b>Red Chrome</b></div></article><article class="skin"><img loading="lazy" decoding="async" src="mk2_digital.webp" alt="Pistol MK2 Digital"><div class="caption"><span>Pistol MK2</span><b>Digital</b></div></article><article class="skin"><img loading="lazy" decoding="async" src="p50_galaxy.webp" alt="Pistol .50 Galaxy"><div class="caption"><span>Pistol .50</span><b>Galaxy</b></div></article></div><div class="showcase-hint">Wischen, um weitere Skins zu sehen →</div></div></section>
-<section class="section" id="tool"><div class="wrap editor"><div class="editor-shot"><img loading="lazy" decoding="async" src="editor.webp" alt="Turbo WP Skins Tool Editor"></div><div class="editor-copy"><div class="kicker">Desktop Tool</div><h2>Alles an einem Ort.</h2><p>Keine unnötigen Zwischenschritte. Der Workflow bleibt von der Waffenauswahl bis zum Export im Tool.</p><div class="mini-list"><div class="mini-item"><span class="mini-icon">01</span><div><b>Waffe auswählen</b><span>Pistol, MK2 oder .50</span></div></div><div class="mini-item"><span class="mini-icon">02</span><div><b>Preset laden</b><span>Direkt mit einem fertigen Look starten</span></div></div><div class="mini-item"><span class="mini-icon">03</span><div><b>Design anpassen</b><span>Farben, Logo und Pattern bearbeiten</span></div></div><div class="mini-item"><span class="mini-icon">04</span><div><b>RPF bauen</b><span>Fertiges Ergebnis exportieren</span></div></div></div></div></div></section>
-<section class="section" id="weapons"><div class="wrap"><div class="section-head"><div><div class="kicker">Supported Weapons</div><h2>Drei Waffen. Sauber unterstützt.</h2></div><p>Der Fokus liegt bewusst auf den drei Pistolen, die du im Tool direkt bearbeiten kannst.</p></div><div class="weapon-grid"><article class="weapon"><span class="status">● Supported</span><h3>Pistol</h3><p>Standard-Pistol mit eigenem Skin-Workflow.</p><span class="mono">WEAPON_PISTOL</span></article><article class="weapon"><span class="status">● Supported</span><h3>Pistol MK2</h3><p>MK2-Skins mit Presets, Farben und eigener Gestaltung.</p><span class="mono">WEAPON_PISTOL_MK2</span></article><article class="weapon"><span class="status">● Supported</span><h3>Pistol .50</h3><p>.50er-Skins im selben schnellen Workflow.</p><span class="mono">WEAPON_PISTOL50</span></article></div></div></section>
-<section class="section" id="features"><div class="wrap"><div class="section-head"><div><div class="kicker">Features</div><h2>Auf das Wesentliche gebaut.</h2></div><p>Klare Oberfläche, kurzer Workflow und genau die Funktionen, die du für deine Weapon Skins brauchst.</p></div><div class="features"><article class="feature"><span class="no">01</span><h3>Presets</h3><p>Fertige Looks laden und als Basis weiterverwenden.</p></article><article class="feature"><span class="no">02</span><h3>Farben</h3><p>Farben und Kombinationen direkt im Design ändern.</p></article><article class="feature"><span class="no">03</span><h3>Eigene Logos</h3><p>Branding oder eigene Grafiken in deinen Skin einbauen.</p></article><article class="feature"><span class="no">04</span><h3>Preview</h3><p>Den Look prüfen, bevor du die finale Datei baust.</p></article><article class="feature"><span class="no">05</span><h3>.rpf Export</h3><p>Das Ergebnis als RPF-Datei für FiveM ausgeben.</p></article><article class="feature"><span class="no">06</span><h3>Direkter Workflow</h3><p>Weniger Dateichaos und weniger manuelle Zwischenschritte.</p></article></div></div></section>
-<section class="section"><div class="wrap"><div class="section-head"><div><div class="kicker">Workflow</div><h2>Von leer bis fertig.</h2></div><p>Der komplette Ablauf bleibt übersichtlich und immer gleich.</p></div><div class="flow"><div class="flow-step"><span>01</span><b>Waffe</b><p>Pistol, MK2 oder .50 auswählen.</p></div><div class="flow-step"><span>02</span><b>Preset</b><p>Look als Ausgangspunkt laden.</p></div><div class="flow-step"><span>03</span><b>Design</b><p>Farben, Logo und Pattern anpassen.</p></div><div class="flow-step"><span>04</span><b>Preview</b><p>Finalen Look kontrollieren.</p></div><div class="flow-step"><span>05</span><b>Export</b><p>.rpf bauen und weiterverwenden.</p></div></div></div></section>
-<section class="section"><div class="wrap system"><div class="system-card"><div class="kicker">System</div><h3>Windows Desktop</h3><div class="specs"><div class="spec"><span>Plattform</span><b>Windows</b></div><div class="spec"><span>Spiel</span><b>GTA V / FiveM</b></div><div class="spec"><span>Export</span><b>.rpf</b></div><div class="spec"><span>Lizenz</span><b>Einmalkauf</b></div></div></div><div class="system-card"><div class="kicker">FiveM Install</div><h3>Für den Mods-Ordner gebaut.</h3><p class="muted" style="margin-top:12px;line-height:1.7">Die fertige RPF ist für den FiveM-Mods-Workflow vorgesehen.</p><div class="specs"><div class="spec"><span>Standardpfad</span><b><code>%localappdata%\FiveM\FiveM.app\mods</code></b></div><div class="spec"><span>Waffen</span><b>3 unterstützt</b></div><div class="spec"><span>Preis</span><b data-price>14,99 €</b></div></div></div></div></section>
-<section class="section" id="buy"><div class="wrap"><div class="buy"><div class="buy-left"><div class="kicker">Turbo WP Skins Tool</div><div class="big-price" data-price>14,99 €</div><div class="sub">Einmalig. Kein monatliches Abo.</div><div class="version"><span id="versionTag">v1.0.0</span><span id="updateTag">01.10.2026</span></div></div><div class="buy-right"><h2>Alles drin, was du zum Start brauchst.</h2><div class="included"><div>Windows Desktop Tool</div><div>Pistol</div><div>Pistol MK2</div><div>Pistol .50</div><div>Presets</div><div>Eigene Farben</div><div>Eigene Logos</div><div>.rpf Export</div></div><div class="buy-actions"><a class="btn primary wide" id="buyButton" data-discord href="https://discord.gg/turbodesigns">Über Discord kaufen · <span data-price>14,99 €</span></a><a class="btn ghost" id="supportButton" data-discord href="https://discord.gg/turbodesigns">Discord Support</a></div><div class="contact-line">Kauf und Support laufen direkt über den Turbo Designs Discord.</div></div></div></div></section>
-<section class="section" id="faq"><div class="wrap"><div class="section-head"><div><div class="kicker">FAQ</div><h2>Kurz beantwortet.</h2></div><p>Die wichtigsten Punkte vor dem Kauf.</p></div><div class="faq"><details open><summary>Welche Waffen sind unterstützt?</summary><p>Pistol, Pistol MK2 und Pistol .50.</p></details><details><summary>Kann ich eigene Logos verwenden?</summary><p>Ja. Eigene Logos und Farben gehören zum vorgesehenen Design-Workflow.</p></details><details><summary>Was exportiert das Tool?</summary><p>Das fertige Ergebnis wird als .rpf für den FiveM-Mods-Workflow ausgegeben.</p></details><details><summary>Ist das ein Abo?</summary><p>Nein. Der Preis beträgt 14,99 € einmalig.</p></details><details><summary>Wo läuft das Tool?</summary><p>Als Windows-Desktop-Anwendung.</p></details><details><summary>Wo bekomme ich Hilfe?</summary><p>Direkt über den Turbo Designs Discord.</p></details></div></div></section>
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="/">
+      <img class="brand-mark" src="/assets/turbo-logo.jpeg" alt="Turbo Designs Logo">
+      <span>Turbo Designs<small>Creator Suite</small></span>
+    </a>
+    <nav class="nav-links" aria-label="Hauptnavigation">
+      <a href="#tools">Tools</a><a href="#features">Features</a><a href="#workflow">Workflow</a><a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-secondary btn-sm" href="https://discord.gg/turbodesigns" target="_blank" rel="noopener">Discord</a>
+      <a class="btn btn-primary btn-sm" href="#tools">Tools ansehen</a>
+      <button class="menu-button" aria-label="Menü öffnen" aria-expanded="false">☰</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container hero-content">
+      <div class="hero-kicker"><i></i> Turbo Designs Creator Suite</div>
+      <h1>Create your own.<br><span class="blue">Make it yours.</span></h1>
+      <p>Soundpacks und Weapon Skins für FiveM schneller erstellen, previewen und sauber exportieren — mit zwei fokussierten Creator-Tools in einem einheitlichen Turbo-Designs-Ökosystem.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#tools">Creator Tools entdecken <span>→</span></a>
+        <a class="btn btn-secondary" href="https://discord.gg/turbodesigns" target="_blank" rel="noopener">Zugang über Discord</a>
+      </div>
+      <div class="hero-metrics">
+        <div class="metric"><strong>2 Creator Tools</strong><span>Sound + Weapon Skins</span></div>
+        <div class="metric"><strong>Windows</strong><span>Für FiveM / GTA V Workflows</span></div>
+        <div class="metric"><strong>Fast Workflow</strong><span>Preview → Export → Install</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="logo-strip">
+    <div class="container logo-strip-inner">
+      <span>Made for creators, not complicated pipelines.</span>
+      <div class="logo-strip-items"><span><i></i> FiveM</span><span><i></i> GTA V</span><span><i></i> RPF Workflow</span><span><i></i> Audio Preview</span><span><i></i> Discord License</span></div>
+    </div>
+  </div>
+
+  <section class="section" id="tools">
+    <div class="container">
+      <span class="eyebrow">Creator Tools</span>
+      <h2 class="section-title reveal">Two tools. One clean workflow.</h2>
+      <p class="section-copy reveal">Kein überladenes All-in-One-Programm. Jedes Tool konzentriert sich auf genau einen Workflow und hält die Bedienung so schnell wie möglich.</p>
+
+      <div class="products">
+        <a class="product-card reveal" href="/soundpack">
+          <div class="product-top">
+            <span class="product-number">PRODUCT / 01</span>
+            <h3>Soundpack<br>Creator</h3>
+            <p>Sounds importieren, vergleichen, previewen, als Pack organisieren und für deinen FiveM-Workflow vorbereiten.</p>
+            <div class="product-tags"><span class="tag">WAV Preview</span><span class="tag">Presets</span><span class="tag">Pack Builder</span><span class="tag">FiveM</span></div>
+          </div>
+          <div class="product-visual">
+            <div class="toolbar"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+            <div class="mock"><div class="mock-side"><div class="mock-pill active"></div><div class="mock-pill"></div><div class="mock-pill"></div><div class="mock-pill"></div></div><div class="mock-main"><div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mock-pill" style="width:82%"></div><div class="mock-pill" style="width:63%;margin-top:8px"></div></div></div>
+          </div>
+        </a>
+
+        <a class="product-card reveal" href="/weapon-skin">
+          <div class="product-top">
+            <span class="product-number">PRODUCT / 02</span>
+            <h3>Weapon Skin<br>Creator</h3>
+            <p>Pistol, Pistol MK2 und Pistol .50 gestalten. Farben, Logos und Patterns anpassen, previewen und als RPF-Workflow vorbereiten.</p>
+            <div class="product-tags"><span class="tag">Pistol</span><span class="tag">Pistol MK2</span><span class="tag">Pistol .50</span><span class="tag">RPF</span></div>
+          </div>
+          <div class="product-visual">
+            <div class="toolbar"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+            <div class="mock"><div class="mock-side"><div class="mock-pill active"></div><div class="mock-pill"></div><div class="mock-pill"></div></div><div class="mock-main"><div style="height:88px;border:1px solid var(--line);border-radius:10px;background:radial-gradient(circle at 55% 45%,rgba(41,151,255,.18),transparent 47%),#0b1017;margin-bottom:14px"></div><div class="palette"><i></i><i></i><i></i><i></i></div></div></div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="features" style="background:#070a10;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+    <div class="container">
+      <span class="eyebrow">Why Turbo</span>
+      <h2 class="section-title reveal">Less friction.<br>More creating.</h2>
+      <div class="feature-grid">
+        <article class="feature reveal"><div class="feature-icon">⌁</div><h4>Fast Preview</h4><p>Änderungen direkt prüfen, bevor du Dateien exportierst oder in deinen FiveM-Ordner installierst.</p></article>
+        <article class="feature reveal"><div class="feature-icon">◇</div><h4>Clean Presets</h4><p>Wiederverwendbare Presets statt jedes Pack oder jeden Skin von Null beginnen zu müssen.</p></article>
+        <article class="feature reveal"><div class="feature-icon">↗</div><h4>Direct Workflow</h4><p>Weniger Zwischenprogramme: Creator öffnen, bearbeiten, exportieren und weiterarbeiten.</p></article>
+        <article class="feature reveal"><div class="feature-icon">◉</div><h4>FiveM Focus</h4><p>Die Oberfläche und Workflows sind für FiveM-Content gedacht und nicht für allgemeine Asset-Pipelines.</p></article>
+        <article class="feature reveal"><div class="feature-icon">⌘</div><h4>Desktop First</h4><p>Für Windows ausgelegt, mit klarer Navigation und ohne unnötig verschachtelte Menüs.</p></article>
+        <article class="feature reveal"><div class="feature-icon">▣</div><h4>Turbo Identity</h4><p>Beide Tools folgen demselben reduzierten Schwarz-/Blau-Design und fühlen sich wie eine Suite an.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="workflow">
+    <div class="container process">
+      <div class="reveal">
+        <span class="eyebrow">Workflow</span>
+        <h2 class="section-title">From idea to game in a few steps.</h2>
+        <p class="section-copy">Das Ziel ist kein kompliziertes Creator-Studio, sondern ein kurzer Weg vom Asset zum fertigen Ergebnis.</p>
+      </div>
+      <div class="steps reveal">
+        <div class="step"><div class="step-num">01</div><div><h4>Choose your creator</h4><p>Soundpack oder Weapon Skin auswählen und mit einer sauberen Vorlage starten.</p></div></div>
+        <div class="step"><div class="step-num">02</div><div><h4>Customize</h4><p>Sounds, Farben, Logos, Patterns oder Presets anpassen und dein eigenes Design erstellen.</p></div></div>
+        <div class="step"><div class="step-num">03</div><div><h4>Preview before export</h4><p>Das Ergebnis prüfen, bevor Dateien in deinen finalen Workflow übernommen werden.</p></div></div>
+        <div class="step"><div class="step-num">04</div><div><h4>Export & install</h4><p>Fertiges Pack bzw. Skin exportieren und für FiveM/GTA V weiterverwenden.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container showcase reveal">
+      <div class="showcase-head">
+        <div><strong>Creator Suite Preview</strong><div style="font-size:12px;color:var(--muted);margin-top:3px">Concept interface</div></div>
+        <div class="tabs"><button class="tab active" data-tab="sound">Soundpack</button><button class="tab" data-tab="weapon">Weapon Skin</button></div>
+      </div>
+      <div class="preview-panel active" data-panel="sound">
+        <div class="preview-layout">
+          <div class="preview-sidebar"><div class="preview-menu active"></div><div class="preview-menu"></div><div class="preview-menu"></div><div class="preview-menu"></div><div class="preview-menu"></div></div>
+          <div class="preview-canvas"><div class="audio-lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+          <div class="preview-inspector"><div class="inspector-label"></div><div class="inspector-field"></div><div class="inspector-label"></div><div class="inspector-field"></div><div class="inspector-label"></div><div class="inspector-field"></div></div>
+        </div>
+      </div>
+      <div class="preview-panel" data-panel="weapon">
+        <div class="preview-layout">
+          <div class="preview-sidebar"><div class="preview-menu active"></div><div class="preview-menu"></div><div class="preview-menu"></div><div class="preview-menu"></div></div>
+          <div class="preview-canvas"><div class="weapon-shape"></div></div>
+          <div class="preview-inspector"><div class="inspector-label"></div><div class="inspector-field"></div><div class="inspector-label"></div><div class="inspector-field"></div><div class="palette"><i></i><i></i><i></i><i></i></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container cta-box reveal">
+      <div class="cta-content">
+        <div><span class="eyebrow">Get access</span><h2>Build your next FiveM pack with Turbo Designs.</h2></div>
+        <a class="btn btn-primary" href="https://discord.gg/turbodesigns" target="_blank" rel="noopener">Zum Turbo Designs Discord →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="container faq">
+      <div class="reveal"><span class="eyebrow">FAQ</span><h2 class="section-title">Questions,<br>answered.</h2><p class="section-copy">Für Kauf, Zugang und Support läuft alles zentral über Turbo Designs.</p></div>
+      <div class="faq-list reveal">
+        <div class="faq-item"><button class="faq-q"><span>Für welche Plattform sind die Tools gedacht?</span><span>+</span></button><div class="faq-a">Die Creator Tools sind auf Windows und FiveM/GTA-V-Workflows ausgerichtet.</div></div>
+        <div class="faq-item"><button class="faq-q"><span>Welche Waffen unterstützt der Weapon Skin Creator?</span><span>+</span></button><div class="faq-a">Der aktuelle Fokus liegt auf Pistol, Pistol MK2 und Pistol .50.</div></div>
+        <div class="faq-item"><button class="faq-q"><span>Wo bekomme ich Zugang oder Support?</span><span>+</span></button><div class="faq-a">Über den Turbo Designs Discord. Dort können Kauf, Lizenz und Support zentral abgewickelt werden.</div></div>
+        <div class="faq-item"><button class="faq-q"><span>Kann ich eigene Sounds, Logos und Patterns benutzen?</span><span>+</span></button><div class="faq-a">Ja. Genau darauf sind die Creator-Workflows ausgelegt: eigene Assets importieren und daraus dein persönliches Pack erstellen.</div></div>
+      </div>
+    </div>
+  </section>
 </main>
-<footer><div class="wrap"><div class="footer-row"><a class="brand" href="#top"><img src="turbo-logo.jpg" alt="Turbo Designs"><span class="brand-copy"><b>Turbo Designs</b><span>WP SKINS TOOL</span></span></a><div class="footer-links"><a id="discordFooter" data-discord href="https://discord.gg/turbodesigns">Discord</a><a data-discord href="https://discord.gg/turbodesigns">Support</a><a href="#faq">FAQ</a></div></div><div class="copyright">© 2026 Turbo Designs. Nicht mit Rockstar Games oder Cfx.re verbunden.</div></div></footer>
-<script src="config.js"></script>
-<script>
-(() => {
-  const cfg = window.TURBO_SITE || {};
-  const product = cfg.product || {};
-  const discord = (cfg.links && cfg.links.discord) || "https://discord.gg/turbodesigns";
-  const price = product.price || "14,99 €";
 
-  document.querySelectorAll("[data-price]").forEach(el => el.textContent = price);
-  document.querySelectorAll("[data-discord]").forEach(el => el.href = discord);
-
-  const versionTag = document.getElementById("versionTag");
-  const updateTag = document.getElementById("updateTag");
-  if (versionTag) versionTag.textContent = "v" + (product.version || "1.0.0");
-  if (updateTag) updateTag.textContent = product.lastUpdate || "01.10.2026";
-
-  const menuBtn = document.getElementById("menuBtn");
-  const mobileMenu = document.getElementById("mobileMenu");
-
-  menuBtn.addEventListener("click", () => {
-    const open = !mobileMenu.classList.contains("open");
-    mobileMenu.classList.toggle("open", open);
-    document.body.classList.toggle("menu-open", open);
-    mobileMenu.setAttribute("aria-hidden", String(!open));
-    menuBtn.setAttribute("aria-expanded", String(open));
-    menuBtn.setAttribute("aria-label", open ? "Menü schließen" : "Menü öffnen");
-    menuBtn.textContent = open ? "✕" : "☰";
-  });
-
-  mobileMenu.querySelectorAll("a").forEach(a => {
-    a.addEventListener("click", () => {
-      mobileMenu.classList.remove("open");
-      document.body.classList.remove("menu-open");
-      mobileMenu.setAttribute("aria-hidden", "true");
-      menuBtn.setAttribute("aria-expanded", "false");
-      menuBtn.setAttribute("aria-label", "Menü öffnen");
-      menuBtn.textContent = "☰";
-    });
-  });
-})();
-</script>
-</body></html>
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand"><a class="brand" href="/"><img class="brand-mark" src="/assets/turbo-logo.jpeg" alt=""><span>Turbo Designs<small>Creator Suite</small></span></a><p>Creator Tools für Soundpacks und Weapon Skins — gebaut für schnelle FiveM-Workflows mit einer klaren, reduzierten Oberfläche.</p></div>
+      <div class="footer-col"><h5>Products</h5><a href="/soundpack">Soundpack Creator</a><a href="/weapon-skin">Weapon Skin Creator</a><a href="https://discord.gg/turbodesigns" target="_blank" rel="noopener">Discord</a></div>
+      <div class="footer-col"><h5>Legal</h5><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Turbo Designs. All rights reserved.</span><span>FiveM / GTA V are trademarks of their respective owners. No affiliation implied.</span></div>
+  </div>
+</footer>
+<script src="/app.js"></script>
+</body>
+</html>

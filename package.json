@@ -1,12 +1,12 @@
 {
-  "name": "turbo-wp-skins-tool-site",
-  "version": "4.0.0",
+  "name": "turbo-designs-creator-suite",
+  "version": "1.0.0",
   "private": true,
-  "description": "Official Turbo WP Skins Tool website",
+  "description": "Turbo Designs landing page for Soundpack Creator and Weapon Skin Creator",
   "scripts": {
-    "start": "serve . -l $PORT"
+    "start": "node server.js"
   },
-  "dependencies": {
-    "serve": "^14.2.4"
+  "engines": {
+    "node": ">=20"
   }
 }
