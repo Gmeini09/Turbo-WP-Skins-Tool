@@ -1,6 +1,8 @@
 # Turbo WP Skins Tool Website
 
-Production landing page for the Turbo WP Skins Tool.
+Final UI version of the Turbo Designs product website.
 
-The current checkout route is Discord and is configured in `config.js`.
-To use PayPal later, change `checkout.mode` to `paypal` and add `checkout.paypalUrl`.
+- Responsive desktop, tablet and mobile layout
+- All purchase/support actions lead directly to https://discord.gg/turbodesigns
+- FiveM weapon showcase and editor preview
+- Railway-ready static deployment
