@@ -1,59 +1,31 @@
-PISTOL SKIN RPF TOOL – RAILWAY HOSTING
 
-ORDNERSTRUKTUR
----------------
-pistol-skin-hosting/
-  index.html
-  config.js
-  package.json
-  railway.json
-  img/
-    mk2_gold_chain.webp
-    p50_galaxy.webp
-    mk2_redchrome.webp
-    p50_cyber.webp
-    mk2_digital.webp
-    editor.webp
+Turbo WP Skins Tool – Preview / Verkaufswebsite
 
-1. BILDER EINFÜGEN
-------------------
-Lege diese 6 Dateien exakt in den Ordner img/:
-- mk2_gold_chain.webp
-- p50_galaxy.webp
-- mk2_redchrome.webp
-- p50_cyber.webp
-- mk2_digital.webp
+Diese Version ist absichtlich nur eine Landingpage:
+- keine Web-Version
+- kein Editor im Browser
+- keine Skin-Erstellung auf der Website
+- Fokus auf Preview + Kaufen
+
+Ordnerstruktur:
+- index.html
+- config.js
+- package.json
+- railway.json
+- img/
+
+Wichtig:
+1. In config.js deinen Tebex-Link bei tebexUrl eintragen.
+2. Danach den Inhalt dieses Ordners in dein GitHub-Repo hochladen/ersetzen.
+3. Railway neu deployen.
+
+Enthaltene Bilder:
+- turbo-logo.jpg
+- turbo-banner.jpg
 - editor.webp
+- mk2_gold_chain.webp
+- mk2_redchrome.webp
+- mk2_digital.webp
+- p50_galaxy.webp
 
-Die Dateinamen müssen exakt stimmen, sonst werden sie auf der Website nicht angezeigt.
-
-2. LINKS EINTRAGEN
-------------------
-Öffne config.js.
-
-tebexUrl = Link zu deinem Tebex-Produkt / Shop.
-appUrl   = Link zu deiner Web-App.
-
-Wenn du noch keine Web-App hast, appUrl zunächst leer lassen.
-
-3. GITHUB
----------
-Erstelle ein neues GitHub-Repository und lade den kompletten INHALT dieses Ordners hoch.
-Wichtig: index.html muss direkt im Hauptverzeichnis liegen, nicht in einem weiteren Unterordner.
-
-4. RAILWAY
-----------
-- New Project
-- Deploy from GitHub Repo
-- Repository auswählen
-- Deployment abwarten
-- Settings / Networking
-- Generate Domain
-
-Railway startet die Website über "npm start".
-
-5. WICHTIG
-----------
-Diese Dateien hosten die aktuell vorhandene Landingpage.
-Der eigentliche Skin-Editor / RPF-Builder ist NICHT Bestandteil der hochgeladenen index.html.
-Für eine echte /app-Seite braucht es den Quellcode der Web-App bzw. ein Backend für den RPF-Build.
+Wenn du später noch mehr Produktbilder hast, kannst du sie im Showcase-Bereich ergänzen.

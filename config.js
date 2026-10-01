@@ -1,8 +1,8 @@
-// Diese zwei Links später ersetzen.
 window.PST_SHOP = {
-  // Beispiel: https://deinshop.tebex.io/package/1234567
-  tebexUrl: "",
+  // Hier deinen echten PayPal Payment Link oder PayPal.Me-Link eintragen.
+  paypalUrl: "",
 
-  // Beispiel: https://deine-domain.at/app/
-  appUrl: ""
+  sellerEmail: "pgmeini@outlook.com",
+  price: "14,99 €",
+  discordUrl: "https://discord.gg/turbodesigns"
 };
