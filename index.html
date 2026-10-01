@@ -1,0 +1,313 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Pistol Skin RPF Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600;700&display=swap">
+<style>
+/* Layout: Werkbank-Bühne. Dunkler Waffenstahl, die Waffe liegt auf einem Lichttisch, ein einziger Akzent:
+   die Anlauffarben von eloxiertem Titan (Bronze → Violett → Blau). Bewusst nur ein dunkles Erscheinungsbild,
+   genau wie die App selbst. */
+:root{
+  --s0:#0c0e11; --s1:#101317; --s2:#14181d; --s3:#191e24; --s4:#222830; --s5:#2d353f; --s6:#3d4652;
+  --bone:#ebe8e2; --ash:#a6aeb7; --dim:#727b86;
+  --heat:linear-gradient(100deg,#d69b4c 0%,#c9867a 22%,#b15ccc 50%,#7a6fe0 74%,#4b88ea 100%);
+  --hb:#b15ccc; --ok:#5fc796;
+  --f-head:"Barlow Semi Condensed","Barlow","Segoe UI",system-ui,sans-serif;
+  --f-ui:"Barlow","Segoe UI",system-ui,sans-serif;
+  --f-code:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  --r:14px; --ease:cubic-bezier(.2,.7,.2,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--s1)}
+body{margin:0;background:var(--s1);color:var(--bone);font:16px/1.6 var(--f-ui);-webkit-font-smoothing:antialiased;padding-inline:clamp(16px,4vw,48px)}
+img{max-width:100%;display:block}
+a{color:inherit}
+:focus-visible{outline:2px solid #9bb0ff;outline-offset:3px;border-radius:4px}
+.wrap{max-width:1180px;margin-inline:auto}
+h1,h2,h3{font-family:var(--f-head);line-height:1.05;text-wrap:balance;margin:0}
+p{margin:0}
+.eyebrow{font:600 12.5px/1 var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ash)}
+.mono{font-family:var(--f-code);font-size:.86em;color:var(--ash)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border-radius:11px;font:700 16.5px/1 var(--f-head);letter-spacing:.01em;text-decoration:none;border:1px solid var(--s5);background:var(--s3);color:var(--bone);transition:transform .15s var(--ease),box-shadow .25s,background-position .5s var(--ease)}
+.btn:hover{transform:translateY(-1px)}
+.btn.buy{background:var(--heat);background-size:140% 100%;border:0;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.3);box-shadow:0 14px 34px -14px var(--hb),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn.buy:hover{background-position:100% 0;box-shadow:0 18px 40px -12px var(--hb),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* Kopf */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin-inline:calc(-1 * clamp(16px,4vw,48px));padding:12px clamp(16px,4vw,48px);background:rgba(16,19,23,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--s3)}
+header.top .wrap{display:flex;align-items:center;gap:22px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:700 18px/1 var(--f-head)}
+.brand svg{width:34px;height:22px}
+.mk-body{fill:#56606c}.mk-heat{fill:url(#heat)}
+nav.links{display:flex;gap:20px;margin-left:auto;font-size:14.5px}
+nav.links a{text-decoration:none;color:var(--ash)}nav.links a:hover{color:var(--bone)}
+header .btn{padding:9px 15px;font-size:15px}
+
+/* Bühne */
+.hero{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:clamp(20px,4vw,56px);align-items:center;padding-block:clamp(40px,7vw,90px) clamp(28px,5vw,60px)}
+.hero h1{font-size:clamp(42px,6.2vw,76px);font-weight:700;letter-spacing:-.01em;margin:14px 0 18px}
+.hero h1 em{font-style:normal;background:var(--heat);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lead{font-size:18.5px;color:var(--ash);max-width:34em}
+.hero .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:26px;font-size:14px;color:var(--ash)}
+.facts b{color:var(--bone);font-family:var(--f-head);font-size:17px;margin-right:4px}
+.stage{position:relative;aspect-ratio:1.25;max-width:100%;border-radius:22px;background:radial-gradient(60% 55% at 50% 46%,#2b323b 0%,#181c22 64%,#121519 100%);border:1px solid var(--s4);overflow:hidden}
+.stage::after{content:"";position:absolute;left:16%;right:16%;bottom:9%;height:7%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.6),transparent);filter:blur(6px)}
+.stage img{position:absolute;inset:17% 6% 12%;width:88%;height:71%;object-fit:contain;z-index:1;transition:opacity .6s var(--ease),transform .8s var(--ease)}
+.stage img.out{opacity:0;transform:translateX(18px) rotate(1deg)}
+.stage .tag{position:absolute;z-index:2;left:18px;top:16px;display:flex;flex-direction:column;gap:2px}
+.stage .tag b{font:700 22px/1 var(--f-head)}
+.stage .tag span{font-size:13px;color:var(--ash);display:flex;align-items:center;gap:8px}
+.stage .tag span::before{content:"";width:18px;height:3px;border-radius:3px;background:var(--heat)}
+.stage .file{position:absolute;z-index:2;right:16px;bottom:14px;font:12px/1.4 var(--f-code);color:var(--dim);text-align:right}
+.dots{position:absolute;z-index:2;left:18px;bottom:16px;display:flex;gap:6px}
+.dots button{width:9px;height:9px;padding:0;border-radius:50%;border:0;background:var(--s6);cursor:pointer}
+.dots button.on{background:var(--bone)}
+
+/* Abschnitte */
+section{padding-block:clamp(48px,7vw,88px);border-top:1px solid var(--s3)}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:end;margin-bottom:34px}
+.sec-head h2{font-size:clamp(32px,4.2vw,48px);font-weight:700;margin-top:10px}
+.sec-head p{color:var(--ash);max-width:36em}
+
+.feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--s3);border:1px solid var(--s3);border-radius:var(--r);overflow:hidden}
+.feat article{background:var(--s1);padding:24px 24px 26px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.feat article.big{grid-column:span 2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:center}
+.feat h3{font-size:22px;font-weight:700}
+.feat p{color:var(--ash);font-size:15px}
+.feat .ic{width:30px;height:30px;fill:none;stroke:#c98bd9;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;margin-bottom:4px}
+.feat .badge{align-self:flex-start;font:600 11px/1.6 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;padding:1px 8px;border-radius:99px;background:var(--heat);color:#fff}
+.feat .pic{border-radius:10px;background:radial-gradient(60% 60% at 50% 50%,#2a3038,#16191e);aspect-ratio:1.3}
+.feat .pic img{width:100%;height:100%;object-fit:contain;padding:6%}
+
+/* Ablauf */
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;counter-reset:s}
+.flow li{list-style:none;position:relative;padding:22px 22px 24px;border-radius:var(--r);background:var(--s2);border:1px solid var(--s4);display:flex;flex-direction:column;gap:8px}
+.flow li::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--s4);font:700 17px/1 var(--f-head);margin-bottom:6px}
+.flow li:last-child::before{background:var(--heat);color:#fff}
+.flow h3{font-size:21px}
+.flow p{color:var(--ash);font-size:15px}
+.flow{padding:0;margin:0}
+.steps11{margin-top:22px;display:flex;flex-wrap:wrap;gap:6px 8px;font-size:13px;color:var(--dim)}
+.steps11 span{padding:4px 10px;border-radius:99px;background:var(--s2);border:1px solid var(--s3);white-space:nowrap}
+
+/* Screenshot */
+.shot{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr);gap:clamp(20px,4vw,48px);align-items:center}
+.shot figure{margin:0;border-radius:var(--r);overflow:hidden;border:1px solid var(--s4);box-shadow:0 40px 80px -40px rgba(0,0,0,.9)}
+.shot ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:16px}
+.shot li{display:flex;flex-direction:column;gap:3px}
+.shot li b{font:700 19px/1.2 var(--f-head)}
+.shot li span{color:var(--ash);font-size:15px}
+
+/* Vergleich */
+.tablewrap{overflow-x:auto;border:1px solid var(--s4);border-radius:var(--r)}
+table{width:100%;border-collapse:collapse;min-width:560px;font-size:15px}
+th,td{padding:13px 18px;text-align:left;border-bottom:1px solid var(--s3)}
+thead th{font:700 18px/1.2 var(--f-head);background:var(--s2)}
+tbody tr:last-child td{border-bottom:0}
+td.y{color:var(--ok)}td.n{color:var(--dim)}
+td:first-child{color:var(--ash)}
+
+/* Preis */
+.price{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,4vw,48px);align-items:center}
+.card{position:relative;padding:30px;border-radius:20px;background:var(--s2);border:1px solid transparent;background-clip:padding-box}
+.card::before{content:"";position:absolute;inset:-1px;z-index:-1;border-radius:21px;background:var(--heat)}
+.card .amount{font:700 64px/1 var(--f-head);margin:12px 0 2px}
+.card .amount small{font-size:20px;color:var(--ash);font-weight:600;margin-left:6px}
+.card ul{margin:20px 0 24px;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.card li{display:flex;gap:10px;font-size:15.5px}
+.card li::before{content:"";flex:none;width:16px;height:16px;margin-top:4px;border-radius:50%;background:var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.3l2.2 2.2 4.8-5' fill='none' stroke='%230c0e11' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat}
+.card .btn{width:100%}
+.card .note{margin-top:12px;font-size:13px;color:var(--dim);text-align:center}
+.req h3{font-size:24px;margin-bottom:12px}
+.req dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 18px;font-size:15px}
+.req dt{color:var(--dim)}.req dd{margin:0;color:var(--ash)}
+
+/* FAQ */
+.faq{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 28px}
+details{border-bottom:1px solid var(--s3);padding:4px 0}
+summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px;padding:12px 0;font:600 18px/1.3 var(--f-head)}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--dim);font-size:22px;line-height:1;transition:transform .25s var(--ease)}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--ash);font-size:15px;padding:0 0 14px}
+
+footer{border-top:1px solid var(--s3);padding-block:28px 40px;font-size:13.5px;color:var(--dim)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
+footer nav{display:flex;gap:18px}
+footer a{color:var(--ash);text-decoration:none}footer a:hover{color:var(--bone)}
+footer p{max-width:60em}
+
+@media (max-width:900px){
+  nav.links{display:none}
+  .hero,.sec-head,.shot,.price{grid-template-columns:1fr}
+  .feat{grid-template-columns:1fr 1fr}.feat article.big{grid-column:span 2}
+  .flow,.faq{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .feat{grid-template-columns:1fr}.feat article.big{grid-column:auto;grid-template-columns:1fr}
+  header .btn{display:none}
+  .card .amount{font-size:52px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.stage img{transition:none}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="heat" x1="0" x2="1"><stop offset="0" stop-color="#d69b4c"/><stop offset=".5" stop-color="#b15ccc"/><stop offset="1" stop-color="#4b88ea"/></linearGradient></defs></svg>
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="#top"><svg viewBox="0 0 64 40" aria-hidden="true"><path class="mk-body" d="M4 6h52l4 3v7H13l-2 3H4z"/><path class="mk-body" d="M12 19h14l-3 17H9z"/><path class="mk-body" d="M26 19c0 7 4 9 10 9v-4c-4 0-6-2-6-5z"/><rect class="mk-heat" x="4" y="12" width="56" height="2.2" rx="1.1"/></svg>Pistol Skin</a>
+  <nav class="links" aria-label="Seite"><a href="#funktionen">Funktionen</a><a href="#ablauf">So geht's</a><a href="#versionen">Desktop &amp; Web</a><a href="#preis">Preis</a><a href="#faq">FAQ</a></nav>
+  <a class="btn buy" data-buy href="#preis">Kaufen · 14,99 €</a>
+</div></header>
+
+<main class="wrap" id="top">
+  <div class="hero">
+    <div>
+      <span class="eyebrow">Skin-Werkbank für FiveM</span>
+      <h1>Eigene Pistolen-Skins. <em>Fertig als .rpf.</em></h1>
+      <p class="lead">Preset anklicken, Farben, Muster, Logo und sogar eine echte Kette anpassen und den Skin mit einem Klick in deinen FiveM-mods-Ordner legen. Kein OpenIV-Gefummel, kein Photoshop.</p>
+      <div class="cta">
+        <a class="btn buy" data-buy href="#preis"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Für 14,99 € kaufen</a>
+        <a class="btn" data-app href="#versionen">Web-Version ansehen</a>
+      </div>
+      <div class="facts"><span><b>3</b>Waffen</span><span><b>47</b>Presets</span><span><b>11</b>Build-Schritte geprüft</span><span><b>1</b>Klick bis FiveM</span></div>
+    </div>
+    <div class="stage" id="stage" aria-label="Beispiel-Skins">
+      <div class="tag"><b id="stW">Pistol MK2</b><span id="stP">Gold · Kette mit Gravur</span></div>
+      <img id="stImg" src="img/mk2_gold_chain.webp" alt="Pistol MK2 im Skin Gold mit goldener Kette und rundem Anhänger" width="1100" height="837">
+      <div class="dots" id="stDots" role="tablist" aria-label="Beispiel wählen"></div>
+      <div class="file" id="stF">w_pi_pistolmk2.ydr<br>DXT1 · 2048² · 12 Mipmaps</div>
+    </div>
+  </div>
+
+  <section id="funktionen">
+    <div class="sec-head"><div><span class="eyebrow">Funktionen</span><h2>Alles, was ein Pistolen-Skin braucht</h2></div><p>Gebaut nur für Pistol, Pistol MK2 und Pistol .50. Dadurch weiß das Tool genau, wo Schlitten, Rahmen, Griff, Magazin und Lauf liegen, und färbt sie einzeln.</p></div>
+    <div class="feat">
+      <article class="big">
+        <div style="display:flex;flex-direction:column;gap:8px"><span class="badge">Neu</span><h3>Kette &amp; Anhänger</h3><p>Eine echte 3D-Kette vorne an der Waffe, hängend oder im Bogen zum Griff. Anhänger rund, als Herz, Stern oder Marke, mit deiner Gravur. Das Tool erzeugt die Geometrie selbst und schreibt sie ins Modell.</p></div>
+        <div class="pic"><img src="img/p50_cyber.webp" alt="Pistol .50 in Pink mit silberner Kette und Stern-Anhänger" loading="lazy" width="855" height="852"></div>
+      </article>
+      <article><svg class="ic" viewBox="0 0 24 24"><circle cx="8" cy="8" r="3.2"/><circle cx="16" cy="8" r="3.2"/><circle cx="8" cy="16" r="3.2"/><circle cx="16" cy="16" r="3.2"/></svg><h3>47 Presets</h3><p>Chrome, Gold, Carbon, Camo, Galaxy, Marmor und mehr. Ein Klick lädt das Preset, danach ist alles frei anpassbar.</p></article>
+      <article><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12L4 7.5M12 12v9"/></svg><h3>3D-Vorschau wie im Spiel</h3><p>Die Vorschau rechnet mit denselben Werten wie GTA: Spiegelung, Glanz und Licht. Original, Skin oder beides im Vergleich.</p></article>
+      <article><svg class="ic" viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg><h3>Direkt auf die Waffe malen</h3><p>Pinsel und Radierer arbeiten auf dem 3D-Modell. Du siehst sofort, wo die Farbe landet, ohne das UV-Netz verstehen zu müssen.</p></article>
+      <article><svg class="ic" viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="13" rx="2"/><path d="M8 13l2.5-3 2 2.5 2-1.5L17 13"/></svg><h3>Logo, Text, Muster</h3><p>Eigenes PNG per Drag &amp; Drop, Crew-Tag mit Outline und Glow, zehn kachelbare Muster und ein Used-Look mit Kratzern an den Kanten.</p></article>
+      <article><svg class="ic" viewBox="0 0 24 24"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg><h3>Ein Klick in FiveM</h3><p>Die Desktop-App findet deinen mods-Ordner, sichert alte Dateien vorher und warnt, wenn ein anderer Mod dieselbe Waffe ersetzt.</p></article>
+      <article><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="6" rx="1.5"/><rect x="4" y="14" width="16" height="6" rx="1.5"/><path d="M8 7h.01M8 17h.01"/></svg><h3>Für deinen Server</h3><p>Export als Server-Resource mit <span class="mono">fxmanifest.lua</span> und <span class="mono">stream/</span>. Alle Spieler sehen den Skin, ohne selbst etwas zu installieren.</p></article>
+      <article><svg class="ic" viewBox="0 0 24 24"><path d="M4 8l8-4 8 4-8 4z"/><path d="M4 12l8 4 8-4"/><path d="M4 16l8 4 8-4"/></svg><h3>Pistol Pack</h3><p>Alle drei Pistolen mit je eigenem Skin in einer einzigen .rpf. Dazu Galerie, Projekte als <span class="mono">.pskin</span> und Backups.</p></article>
+    </div>
+  </section>
+
+  <section id="ablauf">
+    <div class="sec-head"><div><span class="eyebrow">So geht's</span><h2>Vom Klick zur fertigen .rpf</h2></div><p>Die Basis lädst du einmal: eine Pistolen-Skin-.rpf, die du schon hast, oder die Originaldateien aus deinem Spiel. Danach baust du beliebig viele Skins.</p></div>
+    <ol class="flow">
+      <li><h3>Basis laden</h3><p>Eine .rpf, .ydr oder .ytd ins Fenster ziehen. Die Desktop-App findet Skins im mods-Ordner sogar von allein.</p></li>
+      <li><h3>Skin gestalten</h3><p>Preset wählen, Bereiche einfärben, Logo setzen, Kette dranhängen. Jede Änderung siehst du sofort in 3D.</p></li>
+      <li><h3>Installieren</h3><p>„In FiveM installieren“ klicken oder die .rpf herunterladen. FiveM neu starten, fertig.</p></li>
+    </ol>
+    <div class="steps11" aria-label="Was beim Bauen geprüft wird"><span>Waffen prüfen</span><span>Assets laden</span><span>Texturen rendern</span><span>DXT kodieren</span><span>Mipmaps</span><span>Dateien aktualisieren</span><span>Namen prüfen</span><span>RPF-Struktur</span><span>Schreiben</span><span>Validieren</span><span>Fertig</span></div>
+  </section>
+
+  <section>
+    <div class="shot">
+      <figure><img src="img/editor.webp" alt="Der Editor: 3D-Vorschau der Pistol MK2 mit Kette, rechts die Einstellungen für Kette und Anhänger" loading="lazy" width="992" height="880"></figure>
+      <ul>
+        <li><b>Bereiche einzeln färben</b><span>Schlitten, Rahmen, Griff, Magazin und Lauf bekommen jeweils Main-, Secondary- oder Accent-Farbe.</span></li>
+        <li><b>Rückgängig ohne Angst</b><span>Strg+Z und Strg+Y über alles, auch über Malstriche.</span></li>
+        <li><b>Prüft vor dem Bauen</b><span>Texturformat, Auflösung, Mipmaps und Dateinamen werden kontrolliert, bevor die .rpf entsteht.</span></li>
+        <li><b>Keine Schriftzüge</b><span>Hersteller-Gravuren im Modell lassen sich ausblenden, damit dein Design sauber bleibt.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="versionen">
+    <div class="sec-head"><div><span class="eyebrow">Desktop &amp; Web</span><h2>Ein Kauf, zwei Versionen</h2></div><p>Mit dem Lizenzschlüssel aus deiner Kauf-E-Mail nutzt du beide. Die Web-Version läuft im Browser, auch auf dem Mac, die Desktop-App installiert direkt in FiveM.</p></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th scope="col">Funktion</th><th scope="col">Desktop-App (Windows)</th><th scope="col">Web-Version</th></tr></thead>
+      <tbody>
+        <tr><td>Editor, Presets, 3D-Vorschau, Kette, Malen</td><td class="y">Ja</td><td class="y">Ja</td></tr>
+        <tr><td>.rpf bauen und speichern</td><td class="y">Ja</td><td class="y">Ja, als Download</td></tr>
+        <tr><td>Server-Resource exportieren</td><td class="y">Ja</td><td class="y">Ja</td></tr>
+        <tr><td>Direkt in FiveM installieren</td><td class="y">Ja, mit Backup</td><td class="n">Nein, Datei selbst in mods legen</td></tr>
+        <tr><td>Basis automatisch aus dem mods-Ordner</td><td class="y">Ja</td><td class="n">Nein, einmal hochladen</td></tr>
+        <tr><td>Installierte Mods verwalten, Backups</td><td class="y">Ja</td><td class="n">Nein</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="preis">
+    <div class="price">
+      <div class="card">
+        <span class="eyebrow">Einmal zahlen, behalten</span>
+        <div class="amount">14,99 €<small>einmalig</small></div>
+        <p style="color:var(--ash)">Kein Abo. Bezahlung und Download laufen sicher über Tebex, den Shop-Dienst der FiveM-Szene.</p>
+        <ul>
+          <li>Desktop-App für Windows</li>
+          <li>Web-Version im Browser</li>
+          <li>Lizenzschlüssel für beide</li>
+          <li>Kette &amp; Anhänger, 3D-Malen, Server-Export</li>
+          <li>Alle Updates der Version 1</li>
+        </ul>
+        <a class="btn buy" data-buy href="#preis"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Jetzt kaufen</a>
+        <p class="note">Nach dem Kauf kommen Download-Link und Schlüssel per E-Mail.</p>
+      </div>
+      <div class="req">
+        <h3>Was du brauchst</h3>
+        <dl>
+          <dt>Spiel</dt><dd>GTA V (Legacy) mit FiveM</dd>
+          <dt>Desktop</dt><dd>Windows 10 oder 11, 64 Bit, ca. 300 MB frei. Der Installer lädt die Laufzeit einmalig von GitHub.</dd>
+          <dt>Web</dt><dd>Aktueller Chrome, Edge, Firefox oder Safari mit WebGL</dd>
+          <dt>Basis</dt><dd>Eine Pistolen-Skin-.rpf oder die Originaldateien, z. B. <span class="mono">w_pi_pistolmk2.ydr</span> und <span class="mono">.ytd</span></dd>
+          <dt>Server</dt><dd>Client-Mods im mods-Ordner gehen auf Servern ohne Pure Mode. Für eigene Server nimm den Server-Export.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="sec-head"><div><span class="eyebrow">FAQ</span><h2>Häufige Fragen</h2></div><p></p></div>
+    <div class="faq">
+      <details><summary>Warum brauche ich eine Basis?</summary><p>Das Tool liefert keine Spieldateien mit. Es nimmt das Modell aus einer Datei, die du schon hast, und malt deine eigene Textur darauf. Jede Pistolen-Skin-.rpf oder die exportierten Originaldateien funktionieren.</p></details>
+      <details><summary>Werde ich dafür gebannt?</summary><p>Skins im FiveM-mods-Ordner sind reine Optik und nur bei dir sichtbar. Ob ein Server Client-Mods erlaubt, entscheidet der Server: mit aktivem Pure Mode werden sie nicht geladen. Halte dich an die Regeln des jeweiligen Servers.</p></details>
+      <details><summary>Sehen andere Spieler meinen Skin?</summary><p>Ein Skin im mods-Ordner ist nur bei dir zu sehen. Damit alle ihn sehen, exportierst du ihn als Server-Resource und der Server-Betreiber bindet ihn ein.</p></details>
+      <details><summary>Funktioniert es auf dem Mac?</summary><p>Die Web-Version läuft auf jedem Rechner mit aktuellem Browser. Die fertige .rpf brauchst du dann auf dem Windows-PC mit FiveM.</p></details>
+      <details><summary>Wie viele Skins kann ich bauen?</summary><p>So viele du willst. Die Lizenz ist für dich persönlich und gilt für die Desktop-App und die Web-Version.</p></details>
+      <details><summary>Darf ich gebaute Skins weitergeben?</summary><p>Deine eigenen Designs gehören dir. Wenn deine Basis die Skin-Datei von jemand anderem ist, steckt in deinem Ergebnis deren Modell: frag in dem Fall die Person, bevor du es veröffentlichst oder verkaufst.</p></details>
+      <details><summary>Windows warnt beim ersten Start. Ist das normal?</summary><p>Ja, weil die App nicht von Microsoft signiert ist. Klick auf „Weitere Informationen“ und dann „Trotzdem ausführen“.</p></details>
+      <details><summary>Ich habe meinen Schlüssel verloren.</summary><p>Er steht in der Kauf-E-Mail von Tebex. Findest du sie nicht, schreib uns über die Kontaktangaben im Impressum.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  <p>Pistol Skin RPF Tool ist ein unabhängiges Werkzeug und steht in keiner Verbindung zu Rockstar Games, Take-Two Interactive oder Cfx.re. GTA, Grand Theft Auto und FiveM sind Marken ihrer jeweiligen Inhaber.</p>
+  <nav aria-label="Rechtliches"><a href="#top">Impressum</a><a href="#top">Datenschutz</a><a href="#top">AGB &amp; Widerruf</a></nav>
+</div></footer>
+
+<script src="config.js"></script>
+
+<script>
+(function () {
+  var cfg = window.PST_SHOP || {};
+  if (cfg.tebexUrl) document.querySelectorAll('[data-buy]').forEach(function (a) { a.href = cfg.tebexUrl; a.target = '_blank'; a.rel = 'noopener'; });
+  if (cfg.appUrl) document.querySelectorAll('[data-app]').forEach(function (a) { a.href = cfg.appUrl; a.textContent = 'Web-Version öffnen'; });
+  var S = [
+    ['mk2_gold_chain', 'Pistol MK2', 'Gold · Kette mit Gravur', 'w_pi_pistolmk2.ydr', 'Pistol MK2 in Gold mit Kette und rundem Anhänger'],
+    ['p50_galaxy', 'Pistol .50', 'Galaxy · Muster', 'w_pi_pistol50.ydr', 'Pistol .50 mit violettem Galaxy-Muster'],
+    ['mk2_redchrome', 'Pistol MK2', 'Red Chrome · Material Chrome', 'w_pi_pistolmk2.ydr', 'Pistol MK2 in rotem Chrome'],
+    ['p50_cyber', 'Pistol .50', 'Cyber Pink · Stern-Anhänger', 'w_pi_pistol50.ydr', 'Pistol .50 in Pink mit Hexagon-Muster und silberner Kette'],
+    ['mk2_digital', 'Pistol MK2', 'Urban Camo · Digital', 'w_pi_pistolmk2.ydr', 'Pistol MK2 im grauen Digital-Camo']
+  ];
+  var img = document.getElementById('stImg'), dots = document.getElementById('stDots'), i = 0, t = null;
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  S.forEach(function (s, k) { var b = document.createElement('button'); b.setAttribute('aria-label', s[1] + ' ' + s[2]); b.onclick = function () { go(k); clearInterval(t); }; dots.appendChild(b); new Image().src = 'img/' + s[0] + '.webp'; });
+  function go(k) {
+    i = k; var s = S[k]; [].forEach.call(dots.children, function (d, j) { d.classList.toggle('on', j === k); });
+    img.classList.add('out');
+    setTimeout(function () { img.src = 'img/' + s[0] + '.webp'; img.alt = s[4]; document.getElementById('stW').textContent = s[1]; document.getElementById('stP').textContent = s[2]; document.getElementById('stF').innerHTML = s[3] + '<br>DXT1 · 2048² · 12 Mipmaps'; img.classList.remove('out'); }, reduce ? 0 : 280);
+  }
+  dots.children[0].classList.add('on');
+  if (!reduce) t = setInterval(function () { go((i + 1) % S.length); }, 4200);
+})();
+</script>
+
+</body></html>
