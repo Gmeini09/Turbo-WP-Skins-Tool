@@ -1,8 +1,8 @@
 {
   "name": "turbo-wp-skins-tool-site",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
-  "description": "Turbo Designs WP Skins Tool - Preview and sales landing page",
+  "description": "Official website for the Turbo WP Skins Tool.",
   "scripts": {
     "start": "serve . -l $PORT"
   },

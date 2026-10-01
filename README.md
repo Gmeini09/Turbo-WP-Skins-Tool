@@ -1,31 +1,6 @@
-# Turbo WP Skins Tool – Website V2
+# Turbo WP Skins Tool Website
 
-Preview- und Verkaufswebsite für das Turbo Designs WP Skins Tool.
+Production landing page for the Turbo WP Skins Tool.
 
-## Enthalten
-
-- neuer Verkaufs-Hero
-- großes Skin Showcase
-- mobile Showcase-Slider
-- animierte Quick-Demo
-- große Editor Preview
-- Supported Weapons Bereich
-- Features & Workflow
-- PayPal-Kaufbereich
-- Discord-Support
-- mobile Navigation
-- FAQ
-- Platzhalter für Impressum / Datenschutz / Nutzungsbedingungen
-- Railway-ready
-
-## PayPal verbinden
-
-In `config.js`:
-
-```js
-paypalUrl: "DEIN_PAYPAL_LINK"
-```
-
-## Wichtig
-
-Die drei rechtlichen Seiten sind nur Platzhalter und müssen vor echtem öffentlichen Verkauf passend zu deiner tatsächlichen Situation ausgefüllt werden.
+The current checkout route is Discord and is configured in `config.js`.
+To use PayPal later, change `checkout.mode` to `paypal` and add `checkout.paypalUrl`.
