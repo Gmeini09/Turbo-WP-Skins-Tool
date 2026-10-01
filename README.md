@@ -1,8 +1,14 @@
-# Turbo WP Skins Tool Website
+# Turbo WP Skins Tool Website — Redesign
 
-Final UI version of the Turbo Designs product website.
+Komplett überarbeitete Produktwebsite für das Turbo WP Skins Tool.
 
-- Responsive desktop, tablet and mobile layout
-- All purchase/support actions lead directly to https://discord.gg/turbodesigns
-- FiveM weapon showcase and editor preview
-- Railway-ready static deployment
+- responsive Desktop / Tablet / Mobile
+- neue Hero-Komposition
+- neues Showcase
+- große Editor-Preview
+- Supported-Weapons-Bereich
+- Feature-Grid
+- Workflow
+- Kaufbereich
+- FAQ
+- alle Kauf- und Support-Aktionen öffnen direkt https://discord.gg/turbodesigns
