@@ -1,8 +1,8 @@
 {
-  "name": "pistol-skin-rpf-tool-site",
-  "version": "1.0.0",
+  "name": "turbo-wp-skins-tool-site",
+  "version": "2.0.0",
   "private": true,
-  "description": "Landingpage / Web entry for Pistol Skin RPF Tool",
+  "description": "Turbo Designs WP Skins Tool - Preview and sales landing page",
   "scripts": {
     "start": "serve . -l $PORT"
   },

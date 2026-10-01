@@ -4,404 +4,961 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Turbo Designs – WP Skins Tool</title>
-  <meta name="description" content="Preview- und Verkaufswebsite für das Turbo Designs WP Skins Tool. Erstelle eigene FiveM Pistol Skins mit dem Windows Tool und exportiere sie als .rpf.">
+  <meta name="description" content="Turbo WP Skins Tool für FiveM: Pistol, Pistol MK2 und Pistol .50. Presets, eigene Farben und Logos, Preview und .rpf Export.">
+  <meta name="theme-color" content="#060a11">
+
+  <meta property="og:title" content="Turbo Designs – WP Skins Tool">
+  <meta property="og:description" content="Eigene FiveM Weapon Skins schneller erstellen. Für Pistol, Pistol MK2 und Pistol .50.">
+  <meta property="og:image" content="turbo-banner.jpg">
+  <meta property="og:type" content="website">
+
+  <link rel="icon" type="image/jpeg" href="turbo-logo.jpg">
+  <link rel="apple-touch-icon" href="turbo-logo.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Semi+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root{
-      --bg:#070b12;
-      --bg2:#0d1320;
-      --panel:#101827;
-      --panel2:#0c131f;
-      --line:rgba(255,255,255,.08);
-      --text:#f4f7fb;
-      --muted:#9fb0c8;
-      --blue:#3da0ff;
-      --blue2:#73c0ff;
-      --shadow:0 25px 80px rgba(0,0,0,.45);
-      --radius:20px;
-      --max:1200px;
+      color-scheme:dark;
+      --bg:#05080d;
+      --bg2:#08101a;
+      --panel:#0d1622;
+      --panel2:#111d2b;
+      --panel3:#142235;
+      --text:#f7faff;
+      --muted:#97aac3;
+      --line:rgba(255,255,255,.09);
+      --line-strong:rgba(121,199,255,.28);
+      --blue:#3ca5ff;
+      --blue2:#7ac9ff;
+      --cyan:#a4e3ff;
+      --ok:#70dda7;
+      --shadow:0 30px 90px rgba(0,0,0,.42);
+      --radius:24px;
+      --max:1220px;
     }
+
     *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
+    html{scroll-behavior:smooth;scroll-padding-top:90px}
     body{
       margin:0;
-      background:radial-gradient(circle at top, #0d1e35 0%, #08101b 22%, #060910 60%, #05070c 100%);
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 75% -10%,rgba(45,146,255,.18),transparent 35%),
+        radial-gradient(circle at 8% 20%,rgba(51,105,180,.12),transparent 28%),
+        linear-gradient(180deg,#07101b 0%,var(--bg) 28%,#04070c 100%);
       color:var(--text);
-      font:16px/1.6 "Barlow",system-ui,sans-serif;
+      font:16px/1.58 "Barlow",system-ui,sans-serif;
       -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
     }
-    img{max-width:100%;display:block}
+    body.menu-open{overflow:hidden}
+    img{display:block;max-width:100%}
     a{color:inherit}
-    .wrap{width:min(calc(100% - 32px), var(--max)); margin-inline:auto}
-    .section{padding:88px 0;border-top:1px solid var(--line)}
-    .eyebrow{display:inline-block;color:var(--blue2);font:700 12px/1 "Barlow",sans-serif;letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px}
+    button,input{font:inherit}
     h1,h2,h3{font-family:"Barlow Semi Condensed","Barlow",sans-serif;line-height:1.02;margin:0}
-    h2{font-size:clamp(34px,4vw,54px)}
     p{margin:0}
+    strong{font-weight:700}
+    .wrap{width:min(calc(100% - 32px),var(--max));margin-inline:auto}
+    .section{padding:92px 0;border-top:1px solid var(--line)}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:9px;
+      margin-bottom:14px;color:var(--blue2);
+      font-weight:800;font-size:12px;line-height:1;
+      letter-spacing:.16em;text-transform:uppercase;
+    }
+    .eyebrow::before{content:"";width:24px;height:2px;border-radius:4px;background:linear-gradient(90deg,var(--blue),var(--cyan))}
     .muted{color:var(--muted)}
+    .blue{color:var(--blue2)}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
     .btn{
+      border:1px solid var(--line);
+      border-radius:14px;
+      min-height:48px;
+      padding:0 20px;
       display:inline-flex;align-items:center;justify-content:center;gap:10px;
-      text-decoration:none;padding:14px 22px;border-radius:14px;border:1px solid var(--line);
-      background:rgba(255,255,255,.04);color:var(--text);font-weight:700;
-      transition:.2s transform ease,.2s background ease,.2s box-shadow ease;
-      cursor:pointer;
+      color:var(--text);background:rgba(255,255,255,.045);
+      text-decoration:none;font-weight:800;cursor:pointer;
+      transition:transform .2s ease,background .2s ease,border-color .2s ease,box-shadow .2s ease;
     }
-    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.07)}
+    .btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.075);border-color:rgba(255,255,255,.15)}
     .btn.primary{
-      background:linear-gradient(135deg,#1677ff 0%,#3da0ff 55%,#79c7ff 100%);
-      color:white;border:0;box-shadow:0 14px 35px rgba(61,160,255,.28);
+      border:0;
+      background:linear-gradient(135deg,#187fff 0%,#38a6ff 54%,#79ccff 100%);
+      box-shadow:0 16px 38px rgba(45,156,255,.24);
     }
-    .btn.primary:hover{box-shadow:0 18px 44px rgba(61,160,255,.35)}
+    .btn.primary:hover{box-shadow:0 20px 48px rgba(45,156,255,.34)}
+    .btn.small{min-height:42px;padding:0 16px;font-size:15px}
+
+    /* Header */
     .topbar{
-      position:sticky;top:0;z-index:40;
-      backdrop-filter:blur(12px);
-      background:rgba(6,9,16,.78);
+      position:sticky;top:0;z-index:50;
+      background:rgba(5,8,13,.78);
+      backdrop-filter:blur(18px);
       border-bottom:1px solid var(--line);
     }
-    .topbar .inner{display:flex;align-items:center;gap:22px;min-height:76px}
-    .brand{display:flex;align-items:center;gap:14px;text-decoration:none;min-width:0}
-    .brand .thumb{width:48px;height:48px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.09);box-shadow:var(--shadow);background:#07101d;flex:none}
-    .brand .name{display:flex;flex-direction:column;line-height:1.05}
-    .brand .name strong{font:800 22px/1 "Barlow Semi Condensed",sans-serif;letter-spacing:.02em}
-    .brand .name span{color:var(--muted);font-size:13px}
-    nav{margin-left:auto;display:flex;gap:22px;align-items:center}
-    nav a{text-decoration:none;color:var(--muted);font-weight:600}
-    nav a:hover{color:var(--text)}
-
-    .hero{padding:42px 0 38px}
-    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center}
-    .hero-copy h1{font-size:clamp(46px,6vw,86px);letter-spacing:-.03em;margin-bottom:18px}
-    .hero-copy h1 .glow{color:#86cbff;text-shadow:0 0 28px rgba(61,160,255,.26)}
-    .hero-copy .lead{font-size:20px;color:var(--muted);max-width:42rem}
-    .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
-    .hero-badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
-    .hero-badges span{padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--muted);font-size:14px}
-    .hero-card{
-      position:relative;border-radius:28px;overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);box-shadow:var(--shadow);
+    .nav-inner{min-height:76px;display:flex;align-items:center;gap:22px}
+    .brand{display:flex;align-items:center;gap:13px;text-decoration:none;min-width:0}
+    .brand-logo{
+      width:48px;height:48px;flex:none;border-radius:14px;overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:0 14px 32px rgba(0,0,0,.28);
       background:#07111d;
     }
-    .hero-card::after{
-      content:"";position:absolute;inset:0;
-      background:linear-gradient(to top, rgba(5,8,14,.82) 0%, rgba(5,8,14,.1) 38%, rgba(5,8,14,.05) 100%);
+    .brand-logo img{width:100%;height:100%;object-fit:cover}
+    .brand-text{display:flex;flex-direction:column;line-height:1.05}
+    .brand-text strong{font:800 22px/1 "Barlow Semi Condensed",sans-serif}
+    .brand-text span{font-size:12.5px;color:var(--muted);margin-top:4px}
+    .desktop-nav{margin-left:auto;display:flex;align-items:center;gap:22px}
+    .desktop-nav a{font-weight:700;color:var(--muted);text-decoration:none;font-size:15px}
+    .desktop-nav a:hover{color:var(--text)}
+    .header-buy{margin-left:4px}
+    .menu-btn{
+      display:none;margin-left:auto;width:46px;height:46px;border-radius:13px;
+      border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);
+      align-items:center;justify-content:center;cursor:pointer;
     }
-    .hero-card img{width:100%;height:100%;object-fit:cover;aspect-ratio:16/9}
-    .hero-card .overlay{position:absolute;left:24px;right:24px;bottom:22px;z-index:1;display:flex;justify-content:space-between;gap:18px;align-items:end}
-    .hero-card .overlay b{display:block;font:800 clamp(24px,3vw,36px)/1 "Barlow Semi Condensed",sans-serif}
-    .hero-card .overlay span{display:block;color:#d6e6f7}
-    .price-tag{padding:12px 16px;border-radius:16px;background:rgba(6,10,17,.8);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);text-align:right;white-space:nowrap}
-    .price-tag small{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.12em}
-    .price-tag strong{font:800 32px/1 "Barlow Semi Condensed",sans-serif}
+    .menu-btn span,.menu-btn::before,.menu-btn::after{
+      content:"";display:block;width:19px;height:2px;background:currentColor;border-radius:4px;
+      transition:.2s ease;position:absolute;
+    }
+    .menu-btn{position:relative}
+    .menu-btn::before{transform:translateY(-6px)}
+    .menu-btn::after{transform:translateY(6px)}
+    .menu-btn.active span{opacity:0}
+    .menu-btn.active::before{transform:rotate(45deg)}
+    .menu-btn.active::after{transform:rotate(-45deg)}
+    .mobile-menu{
+      display:none;position:fixed;inset:77px 0 0;z-index:45;
+      background:rgba(4,7,12,.97);backdrop-filter:blur(18px);
+      padding:22px 16px 36px;
+    }
+    .mobile-menu.open{display:block}
+    .mobile-menu .menu-card{width:min(100%,560px);margin:auto;display:grid;gap:10px}
+    .mobile-menu a{
+      text-decoration:none;padding:17px 18px;border-radius:16px;
+      border:1px solid var(--line);background:rgba(255,255,255,.04);font-weight:800;
+    }
 
-    .section-head{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end;margin-bottom:28px}
-    .section-head p{max-width:42rem;color:var(--muted)}
+    /* Hero */
+    .hero{padding:54px 0 58px}
+    .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.92fr);gap:46px;align-items:center}
+    .hero h1{font-size:clamp(50px,6.5vw,88px);letter-spacing:-.035em;max-width:780px}
+    .hero h1 .accent{color:var(--blue2);text-shadow:0 0 35px rgba(70,171,255,.22)}
+    .hero .lead{margin-top:20px;max-width:650px;font-size:20px;color:var(--muted)}
+    .hero .lead strong{color:#dcecff}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+    .trust-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:24px}
+    .trust-row span{
+      border:1px solid var(--line);background:rgba(255,255,255,.035);
+      padding:8px 11px;border-radius:999px;color:#b8c7da;font-size:13.5px;font-weight:600;
+    }
+    .hero-visual{
+      position:relative;min-height:520px;border-radius:30px;overflow:hidden;
+      border:1px solid rgba(255,255,255,.11);box-shadow:var(--shadow);background:#07111c;
+    }
+    .hero-visual img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .hero-visual::after{
+      content:"";position:absolute;inset:0;
+      background:
+        linear-gradient(180deg,rgba(5,8,13,.08),rgba(5,8,13,.15) 45%,rgba(5,8,13,.9)),
+        linear-gradient(90deg,rgba(6,11,18,.18),transparent 50%);
+    }
+    .hero-price{
+      position:absolute;z-index:2;right:22px;top:22px;
+      padding:12px 16px;border-radius:16px;
+      background:rgba(5,9,15,.74);backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,.13);
+    }
+    .hero-price span{display:block;font-size:11px;color:var(--muted);letter-spacing:.13em;text-transform:uppercase}
+    .hero-price b{display:block;font:800 34px/1 "Barlow Semi Condensed",sans-serif;margin-top:4px}
+    .hero-overlay{
+      position:absolute;z-index:2;left:22px;right:22px;bottom:22px;
+      display:flex;align-items:end;justify-content:space-between;gap:18px;
+    }
+    .hero-overlay h3{font-size:32px;margin-bottom:5px}
+    .hero-overlay p{color:#c9daec;max-width:360px}
+    .status-pill{
+      white-space:nowrap;padding:8px 12px;border-radius:999px;
+      background:rgba(20,55,40,.72);border:1px solid rgba(112,221,167,.25);
+      color:#9ff0c5;font-size:13px;font-weight:800;
+    }
 
-    .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-    .shot-card{background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
-    .shot-card .visual{background:radial-gradient(circle at center,#233347 0%,#0d1522 54%,#0b111a 100%);padding:26px;aspect-ratio:1/1;display:grid;place-items:center}
-    .shot-card .visual img{width:100%;height:100%;object-fit:contain}
-    .shot-card .info{padding:18px}
-    .shot-card h3{font-size:26px;margin-bottom:4px}
-    .shot-card p{font-size:15px;color:var(--muted)}
+    /* Shared */
+    .section-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,520px);gap:34px;align-items:end;margin-bottom:34px}
+    .section-head h2{font-size:clamp(36px,4.6vw,58px)}
+    .section-head p{color:var(--muted);font-size:17px}
 
-    .feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-    .feature{padding:22px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
-    .feature .icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:rgba(61,160,255,.12);border:1px solid rgba(61,160,255,.18);margin-bottom:14px;color:#a3d7ff;font-size:22px;font-weight:800}
-    .feature h3{font-size:24px;margin-bottom:7px}
+    /* Showcase */
+    .showcase-wrap{position:relative}
+    .showcase-track{
+      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;
+    }
+    .skin-card{
+      position:relative;min-width:0;overflow:hidden;border-radius:24px;
+      border:1px solid var(--line);background:linear-gradient(180deg,#101b29,#0b121d);
+      box-shadow:0 20px 50px rgba(0,0,0,.22);
+      transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
+    }
+    .skin-card:hover{transform:translateY(-5px);border-color:var(--line-strong);box-shadow:0 28px 60px rgba(0,0,0,.32)}
+    .skin-image{
+      aspect-ratio:1/1;display:grid;place-items:center;padding:22px;
+      background:
+        radial-gradient(circle at 50% 42%,rgba(83,154,220,.26),transparent 35%),
+        linear-gradient(180deg,#121e2d,#0a111b);
+      overflow:hidden;
+    }
+    .skin-image img{width:100%;height:100%;object-fit:contain;transition:transform .45s ease}
+    .skin-card:hover .skin-image img{transform:scale(1.06)}
+    .skin-info{padding:18px}
+    .skin-info .tag{color:var(--blue2);font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+    .skin-info h3{font-size:28px;margin:5px 0 6px}
+    .skin-info p{color:var(--muted);font-size:14.5px}
+    .slider-dots{display:none;justify-content:center;gap:7px;margin-top:18px}
+    .slider-dot{width:9px;height:9px;border:0;border-radius:50%;background:#3b4654;padding:0;cursor:pointer}
+    .slider-dot.active{background:var(--blue2)}
+
+    /* Demo Reel */
+    .reel{
+      display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);gap:26px;
+      align-items:stretch;
+    }
+    .reel-screen{
+      position:relative;min-height:520px;border-radius:28px;overflow:hidden;
+      border:1px solid var(--line);background:#07111c;box-shadow:var(--shadow);
+    }
+    .reel-slide{position:absolute;inset:0;opacity:0;transform:scale(1.02);transition:opacity .65s ease,transform 1.1s ease}
+    .reel-slide.active{opacity:1;transform:scale(1)}
+    .reel-slide img{width:100%;height:100%;object-fit:cover}
+    .reel-slide.editor img{object-fit:contain;background:#08101a;padding:14px}
+    .reel-screen::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 58%,rgba(3,6,10,.82))}
+    .reel-caption{position:absolute;z-index:2;left:22px;right:22px;bottom:20px}
+    .reel-caption .step-label{color:var(--blue2);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    .reel-caption h3{font-size:34px;margin-top:4px}
+    .reel-side{
+      display:flex;flex-direction:column;justify-content:center;padding:28px;
+      border-radius:28px;border:1px solid var(--line);background:rgba(255,255,255,.035);
+    }
+    .reel-side h2{font-size:clamp(38px,4vw,54px)}
+    .reel-side>p{margin-top:14px;color:var(--muted)}
+    .reel-controls{display:grid;gap:10px;margin-top:24px}
+    .reel-btn{
+      text-align:left;padding:14px 15px;border-radius:15px;border:1px solid var(--line);
+      background:rgba(255,255,255,.03);color:var(--muted);cursor:pointer;
+      transition:.2s ease;
+    }
+    .reel-btn b{display:block;color:var(--text);font-size:16px}
+    .reel-btn.active{background:rgba(52,155,255,.11);border-color:rgba(82,180,255,.32);color:#c5e6ff}
+
+    /* Editor */
+    .editor-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);gap:30px;align-items:center}
+    .editor-shot{
+      border-radius:28px;overflow:hidden;border:1px solid var(--line);background:#08101a;box-shadow:var(--shadow);
+    }
+    .editor-shot img{width:100%;height:auto}
+    .editor-copy h2{font-size:clamp(38px,4.6vw,58px)}
+    .editor-copy>p{margin-top:14px;color:var(--muted);font-size:17px}
+    .editor-points{display:grid;gap:11px;margin-top:22px}
+    .editor-point{
+      display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:start;
+      padding:14px;border-radius:17px;border:1px solid var(--line);background:rgba(255,255,255,.035);
+    }
+    .editor-point .n{
+      width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+      background:rgba(61,164,255,.12);border:1px solid rgba(61,164,255,.18);color:#a9dcff;font-weight:800;
+    }
+    .editor-point b{display:block;margin-bottom:3px}
+    .editor-point span{color:var(--muted);font-size:14.5px}
+
+    /* Supported Weapons */
+    .weapon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .weapon{
+      position:relative;overflow:hidden;min-height:250px;padding:26px;border-radius:24px;
+      border:1px solid var(--line);background:
+        radial-gradient(circle at 90% 10%,rgba(50,151,255,.18),transparent 35%),
+        linear-gradient(145deg,#111d2c,#0a111b);
+    }
+    .weapon .weapon-no{font:800 76px/.9 "Barlow Semi Condensed",sans-serif;color:rgba(255,255,255,.045);position:absolute;right:18px;top:14px}
+    .weapon .supported{font-size:11px;color:#94e4bc;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    .weapon h3{font-size:34px;margin:30px 0 8px}
+    .weapon p{color:var(--muted)}
+    .weapon .check{position:absolute;left:26px;bottom:24px;color:#9ff0c5;font-weight:800}
+
+    /* Features */
+    .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .feature{
+      padding:24px;border-radius:22px;border:1px solid var(--line);
+      background:rgba(255,255,255,.035);min-height:190px;
+    }
+    .feature-icon{
+      width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+      color:#a8dcff;background:rgba(61,164,255,.11);border:1px solid rgba(61,164,255,.18);
+      font-weight:800;margin-bottom:16px;
+    }
+    .feature h3{font-size:26px;margin-bottom:8px}
     .feature p{color:var(--muted);font-size:15px}
 
-    .editor{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center}
-    .editor-visual{border-radius:24px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);background:#07111d}
-    .editor-copy ul{margin:20px 0 0;padding:0;list-style:none;display:grid;gap:14px}
-    .editor-copy li{padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
-    .editor-copy li strong{display:block;font-size:18px;margin-bottom:4px}
-    .editor-copy li span{color:var(--muted);font-size:15px}
-
+    /* Steps */
     .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-    .step{padding:22px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
-    .step .num{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#1677ff,#58b5ff);font:800 20px/1 "Barlow Semi Condensed",sans-serif;margin-bottom:14px}
-    .step h3{font-size:24px;margin-bottom:6px}
-    .step p{font-size:15px;color:var(--muted)}
+    .step{
+      position:relative;padding:24px;border-radius:22px;border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.025));
+    }
+    .step-no{
+      width:42px;height:42px;border-radius:50%;display:grid;place-items:center;margin-bottom:16px;
+      background:linear-gradient(135deg,#1780ff,#5cbbff);font:800 20px/1 "Barlow Semi Condensed",sans-serif;
+    }
+    .step h3{font-size:25px;margin-bottom:7px}
+    .step p{color:var(--muted);font-size:15px}
 
-    .pricing{display:grid;grid-template-columns:.9fr 1.1fr;gap:24px;align-items:stretch}
-    .price-box{padding:30px;border-radius:26px;background:linear-gradient(180deg, rgba(16,24,39,.95), rgba(11,17,27,.97));border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow)}
-    .price-box .big{font:800 68px/.95 "Barlow Semi Condensed",sans-serif;margin:12px 0 8px}
-    .price-box .big small{font-size:20px;color:var(--muted);font-weight:700}
-    .price-box .sub{color:var(--muted)}
-    .checklist{margin:24px 0 0;padding:0;list-style:none;display:grid;gap:12px}
-    .checklist li{padding-left:28px;position:relative}
-    .checklist li::before{content:"✓";position:absolute;left:0;top:0;color:#79c7ff;font-weight:800}
-    .buy-panel{padding:30px;border-radius:26px;background:rgba(255,255,255,.04);border:1px solid var(--line);display:flex;flex-direction:column;justify-content:center}
-    .buy-panel h3{font-size:36px;margin-bottom:12px}
-    .buy-panel p{color:var(--muted);margin-bottom:18px}
-    .buy-stack{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
-    .buy-stack span{padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:14px;color:var(--muted)}
+    /* Buy */
+    .buy-shell{
+      border-radius:32px;border:1px solid rgba(92,187,255,.22);
+      background:
+        radial-gradient(circle at 100% 0%,rgba(69,167,255,.18),transparent 33%),
+        linear-gradient(145deg,#101a28,#08101a 75%);
+      box-shadow:var(--shadow);overflow:hidden;
+    }
+    .buy-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}
+    .buy-price{padding:36px;border-right:1px solid var(--line)}
+    .buy-price .price{font:800 clamp(62px,7vw,88px)/.9 "Barlow Semi Condensed",sans-serif;letter-spacing:-.035em;margin:13px 0 11px}
+    .buy-price .price small{display:block;font:700 16px/1 "Barlow",sans-serif;color:var(--muted);letter-spacing:0;margin-top:11px}
+    .buy-price p{color:var(--muted)}
+    .buy-detail{padding:36px}
+    .buy-detail h2{font-size:clamp(36px,4vw,52px)}
+    .checks{display:grid;grid-template-columns:1fr 1fr;gap:12px 18px;margin:24px 0 28px}
+    .checks div{position:relative;padding-left:26px;color:#d9e6f4}
+    .checks div::before{content:"✓";position:absolute;left:0;color:#83e8b5;font-weight:900}
+    .buy-actions{display:flex;flex-wrap:wrap;gap:11px}
+    .seller{margin-top:16px;color:var(--muted);font-size:13.5px}
+    .version-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}
+    .version-row span{padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.035);font-size:12.5px;color:#b7c7da}
 
-    .faq{display:grid;gap:14px}
-    details{border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.035);padding:18px 20px}
-    summary{cursor:pointer;list-style:none;font-weight:700;font-size:18px}
+    /* FAQ */
+    .faq{display:grid;gap:12px}
+    details{
+      border:1px solid var(--line);border-radius:18px;padding:18px 20px;background:rgba(255,255,255,.03);
+    }
+    summary{cursor:pointer;list-style:none;font-weight:800;font-size:18px;padding-right:34px;position:relative}
     summary::-webkit-details-marker{display:none}
-    details p{margin-top:10px;color:var(--muted)}
+    summary::after{content:"+";position:absolute;right:0;top:-5px;color:var(--blue2);font-size:28px;font-weight:500}
+    details[open] summary::after{content:"–"}
+    details p{margin-top:11px;color:var(--muted);max-width:900px}
 
-    .footer{padding:36px 0 50px;border-top:1px solid var(--line)}
-    .footer-inner{display:flex;justify-content:space-between;gap:18px;align-items:center}
-    .footer small{color:var(--muted)}
+    /* Support */
+    .support-box{
+      display:flex;align-items:center;justify-content:space-between;gap:26px;
+      padding:30px;border-radius:24px;border:1px solid var(--line);
+      background:linear-gradient(135deg,rgba(72,157,255,.09),rgba(255,255,255,.025));
+    }
+    .support-box h3{font-size:32px;margin-bottom:7px}
+    .support-box p{color:var(--muted)}
 
-    @media (max-width: 1024px){
-      nav{display:none}
-      .hero-grid,.editor,.pricing{grid-template-columns:1fr}
-      .gallery{grid-template-columns:repeat(2,1fr)}
+    /* Footer */
+    footer{padding:34px 0 48px;border-top:1px solid var(--line)}
+    .footer-main{display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .footer-links{display:flex;flex-wrap:wrap;gap:16px}
+    .footer-links a{font-size:14px;color:var(--muted);text-decoration:none}
+    .footer-links a:hover{color:var(--text)}
+    .copyright{margin-top:24px;color:#687b94;font-size:13px}
+
+    /* Modal */
+    .modal{
+      position:fixed;inset:0;z-index:100;display:none;place-items:center;padding:20px;
+      background:rgba(0,0,0,.72);backdrop-filter:blur(9px);
+    }
+    .modal.open{display:grid}
+    .modal-card{
+      width:min(100%,500px);padding:26px;border-radius:24px;border:1px solid var(--line-strong);
+      background:#0b1420;box-shadow:var(--shadow);
+    }
+    .modal-card h3{font-size:30px;margin-bottom:8px}
+    .modal-card p{color:var(--muted)}
+    .modal-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+
+    @media (max-width:1050px){
+      .desktop-nav,.header-buy{display:none}
+      .menu-btn{display:flex}
+      .hero-grid,.reel,.editor-grid,.buy-grid{grid-template-columns:1fr}
+      .hero-visual{min-height:440px}
+      .buy-price{border-right:0;border-bottom:1px solid var(--line)}
+      .showcase-track{grid-template-columns:repeat(2,1fr)}
       .feature-grid{grid-template-columns:repeat(2,1fr)}
       .steps{grid-template-columns:repeat(2,1fr)}
       .section-head{grid-template-columns:1fr}
+      .weapon-grid{grid-template-columns:1fr 1fr 1fr}
     }
-    @media (max-width: 640px){
-      .wrap{width:min(calc(100% - 22px), var(--max))}
-      .topbar .inner{min-height:68px}
-      .brand .thumb{width:42px;height:42px}
-      .brand .name strong{font-size:20px}
-      .hero-copy .lead{font-size:17px}
-      .hero-card .overlay{left:16px;right:16px;bottom:16px;flex-direction:column;align-items:flex-start}
-      .gallery,.feature-grid,.steps{grid-template-columns:1fr}
+
+    @media (max-width:720px){
+      .wrap{width:min(calc(100% - 22px),var(--max))}
+      .nav-inner{min-height:68px}
+      .brand-logo{width:42px;height:42px}
+      .brand-text strong{font-size:20px}
+      .brand-text span{font-size:11.5px}
+      .mobile-menu{inset:69px 0 0}
+      .hero{padding-top:34px}
+      .hero-grid{gap:26px}
+      .hero h1{font-size:clamp(44px,13vw,64px)}
+      .hero .lead{font-size:17px}
+      .hero-actions .btn{width:100%}
+      .hero-visual{min-height:390px}
+      .hero-overlay{flex-direction:column;align-items:flex-start}
+      .hero-price{right:14px;top:14px}
       .section{padding:72px 0}
-      .price-box .big{font-size:54px}
-      .footer-inner{flex-direction:column;align-items:flex-start}
+      .section-head{margin-bottom:26px}
+      .showcase-wrap{overflow:hidden;margin-inline:-11px;padding-inline:11px}
+      .showcase-track{
+        display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;
+        padding-bottom:4px;scrollbar-width:none;
+      }
+      .showcase-track::-webkit-scrollbar{display:none}
+      .skin-card{min-width:86%;scroll-snap-align:center}
+      .slider-dots{display:flex}
+      .reel-screen{min-height:400px}
+      .reel-side{padding:22px}
+      .editor-grid{gap:22px}
+      .weapon-grid,.feature-grid,.steps{grid-template-columns:1fr}
+      .checks{grid-template-columns:1fr}
+      .buy-price,.buy-detail{padding:26px}
+      .support-box{align-items:flex-start;flex-direction:column}
+      .support-box .btn{width:100%}
+      .footer-main{align-items:flex-start;flex-direction:column}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{transition:none!important;animation:none!important}
     }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="wrap inner">
-      <a href="#top" class="brand">
-        <span class="thumb"><img src="turbo-logo.jpg" alt="Turbo Designs Logo"></span>
-        <span class="name"><strong>Turbo Designs</strong><span>WP Skins Tool</span></span>
+
+<header class="topbar">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top">
+      <span class="brand-logo"><img src="turbo-logo.jpg" alt="Turbo Designs Logo"></span>
+      <span class="brand-text"><strong>Turbo Designs</strong><span>WP Skins Tool</span></span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="Hauptnavigation">
+      <a href="#showcase">Showcase</a>
+      <a href="#demo">Demo</a>
+      <a href="#editor">Tool</a>
+      <a href="#weapons">Waffen</a>
+      <a href="#features">Features</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <a class="btn primary small header-buy" href="#buy">Jetzt kaufen</a>
+
+    <button class="menu-btn" id="menuBtn" aria-label="Menü öffnen" aria-expanded="false">
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <div class="menu-card">
+    <a href="#showcase">Showcase</a>
+    <a href="#demo">Demo</a>
+    <a href="#editor">Tool Preview</a>
+    <a href="#weapons">Supported Weapons</a>
+    <a href="#features">Features</a>
+    <a href="#buy">Kaufen · 14,99 €</a>
+    <a href="#faq">FAQ</a>
+  </div>
+</div>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Turbo Designs · FiveM Tool</span>
+        <h1>Erstelle deine eigenen <span class="accent">FiveM Weapon Skins.</span></h1>
+        <p class="lead">
+          Schnell, clean und ohne unnötigen Workflow. Für <strong>Pistol</strong>,
+          <strong>Pistol MK2</strong> und <strong>Pistol .50</strong> – mit Presets,
+          eigenen Farben, Logos, Preview und <strong>.rpf Export</strong>.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn primary" data-buy href="#buy">Mit PayPal kaufen · 14,99 €</a>
+          <a class="btn" href="#showcase">Showcase ansehen</a>
+        </div>
+
+        <div class="trust-row">
+          <span>Windows Tool</span>
+          <span>Kein Abo</span>
+          <span>3 Waffen</span>
+          <span>.rpf Export</span>
+          <span>FiveM</span>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <img src="turbo-banner.jpg" alt="Turbo Designs WP Skins Tool Banner">
+        <div class="hero-price"><span>Einmalig</span><b>14,99 €</b></div>
+        <div class="hero-overlay">
+          <div>
+            <h3>Turbo WP Skins Tool</h3>
+            <p>Die Website zeigt dir das Produkt. Deine Skins erstellst du anschließend in der Windows-App.</p>
+          </div>
+          <span class="status-pill">● Available</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="showcase">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Skin Showcase</span>
+          <h2>Sieh zuerst, was möglich ist.</h2>
+        </div>
+        <p>
+          Beispiele aus dem Look des Tools. Presets geben dir einen schnellen Startpunkt,
+          danach kannst du Farben, Logos und das gesamte Design weiter anpassen.
+        </p>
+      </div>
+
+      <div class="showcase-wrap">
+        <div class="showcase-track" id="showcaseTrack">
+          <article class="skin-card">
+            <div class="skin-image"><img src="mk2_gold_chain.webp" alt="Pistol MK2 Gold Chain Skin"></div>
+            <div class="skin-info"><span class="tag">Pistol MK2</span><h3>Gold Chain</h3><p>Goldener Premium-Look mit Chain-Style.</p></div>
+          </article>
+
+          <article class="skin-card">
+            <div class="skin-image"><img src="mk2_redchrome.webp" alt="Pistol MK2 Red Chrome Skin"></div>
+            <div class="skin-info"><span class="tag">Pistol MK2</span><h3>Red Chrome</h3><p>Kräftiger Chrome-/Candy-Look für auffällige Designs.</p></div>
+          </article>
+
+          <article class="skin-card">
+            <div class="skin-image"><img src="mk2_digital.webp" alt="Pistol MK2 Digital Skin"></div>
+            <div class="skin-info"><span class="tag">Pistol MK2</span><h3>Digital</h3><p>Cleaner Digital-Look als schnelle Preset-Basis.</p></div>
+          </article>
+
+          <article class="skin-card">
+            <div class="skin-image"><img src="p50_galaxy.webp" alt="Pistol .50 Galaxy Skin"></div>
+            <div class="skin-info"><span class="tag">Pistol .50</span><h3>Galaxy</h3><p>Farbiger Space-Look als Showcase für ausgefallenere Skins.</p></div>
+          </article>
+        </div>
+        <div class="slider-dots" id="sliderDots" aria-label="Showcase Navigation"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="demo">
+    <div class="wrap reel">
+      <div class="reel-screen" id="reelScreen">
+        <div class="reel-slide editor active" data-reel="0">
+          <img src="editor.webp" alt="Tool Editor Preview">
+        </div>
+        <div class="reel-slide" data-reel="1">
+          <img src="mk2_gold_chain.webp" alt="Preset auswählen">
+        </div>
+        <div class="reel-slide" data-reel="2">
+          <img src="mk2_redchrome.webp" alt="Design anpassen">
+        </div>
+        <div class="reel-slide" data-reel="3">
+          <img src="p50_galaxy.webp" alt="RPF exportieren">
+        </div>
+        <div class="reel-caption">
+          <span class="step-label" id="reelLabel">Step 01</span>
+          <h3 id="reelTitle">Waffe & Preset auswählen</h3>
+        </div>
+      </div>
+
+      <div class="reel-side">
+        <span class="eyebrow">Quick Demo</span>
+        <h2>Vom Start bis zur fertigen .rpf.</h2>
+        <p>
+          Die animierte Vorschau zeigt den Workflow kompakt. Die eigentliche Bearbeitung
+          findet in der Windows-App statt.
+        </p>
+
+        <div class="reel-controls">
+          <button class="reel-btn active" data-index="0"><b>01 · Start</b>Waffe auswählen und Projekt öffnen.</button>
+          <button class="reel-btn" data-index="1"><b>02 · Preset</b>Mit einem fertigen Style starten.</button>
+          <button class="reel-btn" data-index="2"><b>03 · Anpassen</b>Farben, Logo und Look bearbeiten.</button>
+          <button class="reel-btn" data-index="3"><b>04 · Export</b>Finalen Skin als .rpf ausgeben.</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="editor">
+    <div class="wrap editor-grid">
+      <div class="editor-shot">
+        <img src="editor.webp" alt="Große Vorschau des Turbo WP Skins Tool Editors">
+      </div>
+
+      <div class="editor-copy">
+        <span class="eyebrow">Tool Preview</span>
+        <h2>Alles in einem cleanen Workflow.</h2>
+        <p>
+          Keine Skin-Erstellung auf dieser Website: Das eigentliche Tool läuft unter Windows.
+          Dort baust du deinen Skin Schritt für Schritt und exportierst ihn anschließend.
+        </p>
+
+        <div class="editor-points">
+          <div class="editor-point"><span class="n">01</span><div><b>Waffe wählen</b><span>Pistol, Pistol MK2 oder Pistol .50.</span></div></div>
+          <div class="editor-point"><span class="n">02</span><div><b>Preset als Basis</b><span>Mit einem fertigen Look starten und weiter anpassen.</span></div></div>
+          <div class="editor-point"><span class="n">03</span><div><b>Farben & Logos</b><span>Eigenes Branding und deinen eigenen Style umsetzen.</span></div></div>
+          <div class="editor-point"><span class="n">04</span><div><b>.rpf Export</b><span>Finales Ergebnis für die weitere Nutzung in FiveM exportieren.</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="weapons">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Supported Weapons</span>
+          <h2>Bewusst auf drei Pistolen fokussiert.</h2>
+        </div>
+        <p>
+          Statt möglichst viele Waffen halb zu unterstützen, konzentriert sich das Tool
+          auf diese drei Modelle und einen einfachen Workflow.
+        </p>
+      </div>
+
+      <div class="weapon-grid">
+        <article class="weapon">
+          <span class="weapon-no">01</span>
+          <span class="supported">✓ Supported</span>
+          <h3>Pistol</h3>
+          <p>Die klassische GTA/FiveM Pistol als unterstützte Basis.</p>
+          <span class="check">Ready for skins</span>
+        </article>
+        <article class="weapon">
+          <span class="weapon-no">02</span>
+          <span class="supported">✓ Supported</span>
+          <h3>Pistol MK2</h3>
+          <p>Ideal für auffällige Presets, Farben und individuelle Designs.</p>
+          <span class="check">Ready for skins</span>
+        </article>
+        <article class="weapon">
+          <span class="weapon-no">03</span>
+          <span class="supported">✓ Supported</span>
+          <h3>Pistol .50</h3>
+          <p>Auch die .50er ist direkt im unterstützten Workflow enthalten.</p>
+          <span class="check">Ready for skins</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Features</span>
+          <h2>Das Wesentliche für deinen Skin.</h2>
+        </div>
+        <p>
+          Die Oberfläche soll dir Arbeit abnehmen und den Ablauf vom ersten Preset
+          bis zum fertigen Export übersichtlich halten.
+        </p>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature"><div class="feature-icon">01</div><h3>Presets</h3><p>Fertige Styles als schnelle Grundlage für dein eigenes Design.</p></article>
+        <article class="feature"><div class="feature-icon">02</div><h3>Eigene Farben</h3><p>Farbkombinationen anpassen und den Look auf deinen Style abstimmen.</p></article>
+        <article class="feature"><div class="feature-icon">03</div><h3>Eigene Logos</h3><p>Dein eigenes Branding oder Design in den Skin-Workflow einbauen.</p></article>
+        <article class="feature"><div class="feature-icon">04</div><h3>Preview</h3><p>Den Look vor dem Export prüfen und Änderungen direkt nachvollziehen.</p></article>
+        <article class="feature"><div class="feature-icon">05</div><h3>.rpf Export</h3><p>Das fertige Ergebnis als .rpf für deine weitere FiveM-Nutzung ausgeben.</p></article>
+        <article class="feature"><div class="feature-icon">06</div><h3>Windows Tool</h3><p>Die Erstellung läuft lokal in der Desktop-App und nicht im Browser.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Workflow</span>
+          <h2>Vier Schritte. Kein unnötiger Umweg.</h2>
+        </div>
+        <p>Preview ansehen, Tool kaufen, herunterladen und anschließend deine Skins lokal erstellen.</p>
+      </div>
+
+      <div class="steps">
+        <article class="step"><div class="step-no">1</div><h3>Preview ansehen</h3><p>Showcase, Tool-Oberfläche und Features auf der Website ansehen.</p></article>
+        <article class="step"><div class="step-no">2</div><h3>Tool kaufen</h3><p>Über PayPal bezahlen. Der Preis beträgt 14,99 € einmalig.</p></article>
+        <article class="step"><div class="step-no">3</div><h3>Download erhalten</h3><p>Nach dem Kauf das Windows Tool herunterladen und lokal starten.</p></article>
+        <article class="step"><div class="step-no">4</div><h3>Skin erstellen</h3><p>Design bauen, Preview prüfen und anschließend als .rpf exportieren.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="buy">
+    <div class="wrap">
+      <div class="buy-shell">
+        <div class="buy-grid">
+          <div class="buy-price">
+            <span class="eyebrow">Einmaliger Kauf</span>
+            <div class="price"><span data-price>14,99 €</span><small>Kein monatliches Abo.</small></div>
+            <p>Ein Kauf für das Turbo WP Skins Tool und den aktuellen Funktionsumfang.</p>
+
+            <div class="version-row">
+              <span id="versionBadge">Version v1.0.0</span>
+              <span id="updateBadge">Update Oktober 2026</span>
+            </div>
+          </div>
+
+          <div class="buy-detail">
+            <span class="eyebrow">Turbo WP Skins Tool</span>
+            <h2>Ready to build your own skin?</h2>
+
+            <div class="checks">
+              <div>Windows Desktop Tool</div>
+              <div>Pistol</div>
+              <div>Pistol MK2</div>
+              <div>Pistol .50</div>
+              <div>Presets</div>
+              <div>Eigene Farben & Logos</div>
+              <div>Preview</div>
+              <div>.rpf Export</div>
+            </div>
+
+            <div class="buy-actions">
+              <a class="btn primary" data-buy href="#">Mit PayPal bezahlen · 14,99 €</a>
+              <a class="btn" id="discordBuy" href="https://discord.gg/turbodesigns" target="_blank" rel="noopener">Discord Support</a>
+            </div>
+
+            <p class="seller">Verkäuferkontakt: <strong id="sellerEmail">pgmeini@outlook.com</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">FAQ</span>
+          <h2>Fragen vor dem Kauf.</h2>
+        </div>
+        <p>Die wichtigsten Punkte, bevor du das Tool kaufst.</p>
+      </div>
+
+      <div class="faq">
+        <details open>
+          <summary>Kann ich direkt auf der Website Skins erstellen?</summary>
+          <p>Nein. Die Website ist eine Preview- und Verkaufsseite. Die eigentliche Skin-Erstellung passiert ausschließlich im Windows Tool.</p>
+        </details>
+        <details>
+          <summary>Welche Waffen unterstützt das Tool?</summary>
+          <p>Pistol, Pistol MK2 und Pistol .50.</p>
+        </details>
+        <details>
+          <summary>Kann ich eigene Farben und Logos verwenden?</summary>
+          <p>Ja. Eigene Farben und Logos gehören zum vorgesehenen Skin-Workflow des Tools.</p>
+        </details>
+        <details>
+          <summary>Was exportiert das Tool?</summary>
+          <p>Das fertige Skin-Ergebnis kann als .rpf exportiert werden.</p>
+        </details>
+        <details>
+          <summary>Ist das ein Abo?</summary>
+          <p>Nein. Der auf dieser Seite angegebene Preis ist 14,99 € einmalig.</p>
+        </details>
+        <details>
+          <summary>Wo bekomme ich Support?</summary>
+          <p>Über den Turbo Designs Discord. Den Link findest du direkt im Kaufbereich und weiter unten im Support-Bereich.</p>
+        </details>
+        <details>
+          <summary>Was passiert nach der Zahlung?</summary>
+          <p>Der konkrete Download-/Auslieferungsablauf wird über deinen eingerichteten Verkaufsprozess bereitgestellt. Bei Fragen kannst du den Discord-Support nutzen.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="support-box">
+        <div>
+          <span class="eyebrow">Turbo Designs Support</span>
+          <h3>Noch Fragen zum Tool?</h3>
+          <p>Schreib uns auf Discord, wenn du vor dem Kauf noch etwas wissen möchtest.</p>
+        </div>
+        <a class="btn primary" id="discordSupport" href="https://discord.gg/turbodesigns" target="_blank" rel="noopener">Discord öffnen</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-main">
+      <a class="brand" href="#top">
+        <span class="brand-logo"><img src="turbo-logo.jpg" alt="Turbo Designs Logo"></span>
+        <span class="brand-text"><strong>Turbo Designs</strong><span>WP Skins Tool</span></span>
       </a>
-      <nav>
-        <a href="#showcase">Showcase</a>
-        <a href="#features">Features</a>
-        <a href="#editor">Preview</a>
-        <a href="#buy">Kaufen</a>
-        <a href="#faq">FAQ</a>
-      </nav>
-      <a href="#buy" class="btn primary" data-buy>Mit PayPal bezahlen · 14,99 €</a>
+
+      <div class="footer-links">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+        <a href="nutzungsbedingungen.html">Nutzungsbedingungen</a>
+        <a id="discordFooter" href="https://discord.gg/turbodesigns" target="_blank" rel="noopener">Discord</a>
+      </div>
     </div>
-  </header>
+    <div class="copyright">© 2026 Turbo Designs. FiveM/GTA V sind Marken ihrer jeweiligen Rechteinhaber. Diese Seite ist nicht mit Rockstar Games oder Cfx.re verbunden.</div>
+  </div>
+</footer>
 
-  <main id="top">
-    <section class="hero">
-      <div class="wrap hero-grid">
-        <div class="hero-copy">
-          <span class="eyebrow">Turbo Designs · FiveM Tool</span>
-          <h1>Build clean <span class="glow">weapon skins</span> faster.</h1>
-          <p class="lead">Das <strong>Turbo Designs WP Skins Tool</strong> ist ein Windows Tool für <strong>Pistol</strong>, <strong>Pistol MK2</strong> und <strong>Pistol .50</strong>. Die Website ist nur eine Preview – gekauft wird das Tool, nicht ein Web-Editor.</p>
-          <div class="hero-cta">
-            <a href="#buy" class="btn primary" data-buy>Mit PayPal bezahlen · 14,99 €</a>
-            <a href="#showcase" class="btn">Showcase ansehen</a>
-          </div>
-          <div class="hero-badges">
-            <span>Nur Preview-Website</span>
-            <span>Windows Tool</span>
-            <span>Einmaliger Kauf</span>
-            <span>.rpf Export</span>
-          </div>
-        </div>
-        <div class="hero-card">
-          <img src="turbo-banner.jpg" alt="Turbo Designs Banner">
-          <div class="overlay">
-            <div>
-              <b>Turbo Designs</b>
-              <span>WP Skins Tool · Preview & Purchase</span>
-            </div>
-            <div class="price-tag">
-              <small>Preis</small>
-              <strong>14,99 €</strong>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="showcase">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow">Showcase</span>
-            <h2>So sehen die Skins aus</h2>
-          </div>
-          <p>Hier sieht man nur Beispiele und Preset-Styles. Auf der Website selbst werden keine Skins erstellt – sie dient nur als Produkt-Preview für dein Tool.</p>
-        </div>
-        <div class="gallery">
-          <article class="shot-card">
-            <div class="visual"><img src="mk2_gold_chain.webp" alt="Pistol MK2 Gold Chain"></div>
-            <div class="info"><h3>Gold Chain</h3><p>Pistol MK2 mit goldener Kette und hochwertigem Preset-Look.</p></div>
-          </article>
-          <article class="shot-card">
-            <div class="visual"><img src="mk2_redchrome.webp" alt="Pistol MK2 Red Chrome"></div>
-            <div class="info"><h3>Red Chrome</h3><p>Starker Chrome-/Candy-Look für auffällige Gangwar- oder FFA-Styles.</p></div>
-          </article>
-          <article class="shot-card">
-            <div class="visual"><img src="mk2_digital.webp" alt="Pistol MK2 Digital"></div>
-            <div class="info"><h3>Digital</h3><p>Cleanes Digital-Camo Preset mit moderner Waffenoptik.</p></div>
-          </article>
-          <article class="shot-card">
-            <div class="visual"><img src="p50_galaxy.webp" alt="Pistol 50 Galaxy"></div>
-            <div class="info"><h3>Galaxy</h3><p>Pistol .50 mit farbigem Space-/Galaxy-Finish als Showcase-Beispiel.</p></div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="features">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow">Features</span>
-            <h2>Was das Tool kann</h2>
-          </div>
-          <p>Der Fokus liegt auf einem schnellen Workflow: auswählen, anpassen, previewen, exportieren. Die Seite erklärt und verkauft das Tool – die eigentliche Arbeit passiert in der Desktop-App.</p>
-        </div>
-        <div class="feature-grid">
-          <article class="feature"><div class="icon">01</div><h3>3 Waffen</h3><p>Unterstützt nur Pistol, Pistol MK2 und Pistol .50 – dadurch ist alles sauber auf diese Waffen optimiert.</p></article>
-          <article class="feature"><div class="icon">02</div><h3>Presets</h3><p>Mehrere Presets und Styles als Basis für schnelle und hochwertige Designs.</p></article>
-          <article class="feature"><div class="icon">03</div><h3>Eigene Farben & Logos</h3><p>Farben anpassen, Logos einbauen und dein eigenes Branding auf dem Skin platzieren.</p></article>
-          <article class="feature"><div class="icon">04</div><h3>.rpf Export</h3><p>Das fertige Ergebnis wird direkt als .rpf exportiert und kann danach in FiveM genutzt werden.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="editor">
-      <div class="wrap editor">
-        <div class="editor-visual">
-          <img src="editor.webp" alt="Editor Preview des Turbo WP Skins Tools">
-        </div>
-        <div class="editor-copy">
-          <span class="eyebrow">Tool Preview</span>
-          <h2>Cleanes Tool. Schneller Workflow.</h2>
-          <p class="muted">Der große Unterschied: <strong>Hier auf der Website sieht man nur eine Preview</strong>. Das eigentliche Tool läuft auf Windows und ist auf schnelles Erstellen und Exportieren von FiveM-Weapon-Skins ausgelegt.</p>
-          <ul>
-            <li><strong>Waffe auswählen</strong><span>Pistol, MK2 oder .50 auswählen und direkt mit einem Preset starten.</span></li>
-            <li><strong>Design anpassen</strong><span>Farben, Logos, Pattern und Gesamtlook sauber aufeinander abstimmen.</span></li>
-            <li><strong>Preview prüfen</strong><span>Vor dem Export noch einmal alles kontrollieren und den finalen Look ansehen.</span></li>
-            <li><strong>.rpf bauen</strong><span>Am Ende die fertige Datei exportieren und in FiveM weiterverwenden.</span></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow">Ablauf</span>
-            <h2>So funktioniert der Kauf-Flow</h2>
-          </div>
-          <p>Die Website soll nur klar zeigen, was man bekommt. Deshalb ist der Ablauf bewusst einfach gehalten: ansehen, kaufen, herunterladen, nutzen.</p>
-        </div>
-        <div class="steps">
-          <article class="step"><div class="num">1</div><h3>Preview ansehen</h3><p>Besucher schauen sich Beispiele, Editor-Preview und Features an.</p></article>
-          <article class="step"><div class="num">2</div><h3>Tool kaufen</h3><p>Über den Kaufen-Button geht es direkt zu PayPal. Der Preis ist fest mit 14,99 € angegeben.</p></article>
-          <article class="step"><div class="num">3</div><h3>Download erhalten</h3><p>Nach dem Kauf bekommt der Nutzer das Windows Tool und kann es lokal nutzen.</p></article>
-          <article class="step"><div class="num">4</div><h3>Skins bauen</h3><p>Die Erstellung passiert im gekauften Tool – nicht auf der Website.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="buy">
-      <div class="wrap pricing">
-        <div class="price-box">
-          <span class="eyebrow">Preis</span>
-          <h2>Einmal zahlen. Dauerhaft nutzen.</h2>
-          <div class="big">14,99 € <small>einmalig</small></div>
-          <p class="sub">Kein Abo, keine monatlichen Kosten. Die Website ist nur die Verkaufs- und Preview-Seite für dein Tool.</p>
-          <ul class="checklist">
-            <li>Windows Desktop Tool</li>
-            <li>Pistol, Pistol MK2 und Pistol .50</li>
-            <li>Preset-basierter Workflow</li>
-            <li>Farben, Logos und Look anpassen</li>
-            <li>.rpf Export für FiveM</li>
-            <li>Klare Tool-Preview & einfacher Kauf-Flow</li>
-          </ul>
-        </div>
-        <div class="buy-panel">
-          <span class="eyebrow">PayPal Checkout</span>
-          <h3>Turbo WP Skins Tool mit PayPal kaufen</h3>
-          <p>Preis: <strong>14,99 € einmalig</strong>. Zahlung über PayPal. Verkäuferkontakt: <strong id="sellerEmail">pgmeini@outlook.com</strong>.</p>
-          <div class="hero-cta">
-            <a href="#" class="btn primary" data-buy>Mit PayPal bezahlen · 14,99 €</a>
-            <a href="https://discord.gg/turbodesigns" class="btn">Discord</a>
-          </div>
-          <div class="buy-stack">
-            <span>Turbo Designs Branding</span>
-            <span>Nur Preview</span>
-            <span>PayPal Zahlung</span>
-            <span>Mobile friendly</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="faq">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow">FAQ</span>
-            <h2>Fragen vor dem Kauf</h2>
-          </div>
-          <p>Hier stehen nur Fragen, die für Besucher vor dem Kauf wichtig sind – nicht technische Web-App-Themen.</p>
-        </div>
-        <div class="faq">
-          <details open>
-            <summary>Kann ich auf der Website direkt Skins erstellen?</summary>
-            <p>Nein. Die Website ist nur eine Preview- und Verkaufsseite. Die Skin-Erstellung passiert ausschließlich im gekauften Windows Tool.</p>
-          </details>
-          <details>
-            <summary>Welche Waffen werden unterstützt?</summary>
-            <p>Aktuell ist das Tool nur für Pistol, Pistol MK2 und Pistol .50 ausgelegt.</p>
-          </details>
-          <details>
-            <summary>Was bekomme ich nach dem Kauf?</summary>
-            <p>Nach dem Kauf bekommst du das Tool bzw. den Download-Zugang und kannst damit deine eigenen Weapon-Skins lokal erstellen und als .rpf exportieren.</p>
-          </details>
-          <details>
-            <summary>Brauche ich ein Abo?</summary>
-            <p>Nein. Die Seite ist auf einen einmaligen Kauf mit klarem Produkt-Fokus ausgelegt.</p>
-          </details>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="wrap footer-inner">
-      <div class="brand">
-        <span class="thumb"><img src="turbo-logo.jpg" alt="Turbo Designs Logo klein"></span>
-        <span class="name"><strong>Turbo Designs</strong><span>WP Skins Tool</span></span>
-      </div>
-      <small>© Turbo Designs · Preview / Verkaufswebsite für das WP Skins Tool</small>
+<div class="modal" id="paymentModal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle">
+    <span class="eyebrow">PayPal</span>
+    <h3 id="paymentModalTitle">Zahlungslink noch nicht hinterlegt</h3>
+    <p>
+      Der PayPal-Link fehlt aktuell noch in <strong>config.js</strong>.
+      Verkäuferkontakt: <strong id="modalSeller">pgmeini@outlook.com</strong>.
+    </p>
+    <div class="modal-actions">
+      <a class="btn primary" id="modalDiscord" href="https://discord.gg/turbodesigns" target="_blank" rel="noopener">Auf Discord fragen</a>
+      <button class="btn" id="closeModal" type="button">Schließen</button>
     </div>
-  </footer>
+  </div>
+</div>
 
-  <script src="config.js"></script>
-  <script>
-    (function(){
-      const shop = (window.PST_SHOP && window.PST_SHOP.paypalUrl) ? window.PST_SHOP.paypalUrl.trim() : "";
-      const sellerEmail = (window.PST_SHOP && window.PST_SHOP.sellerEmail) ? window.PST_SHOP.sellerEmail : "pgmeini@outlook.com";
-      const sellerEmailEl = document.getElementById("sellerEmail");
-      if (sellerEmailEl) sellerEmailEl.textContent = sellerEmail;
-      document.querySelectorAll('[data-buy]').forEach(btn => {
-        btn.addEventListener('click', function(e){
-          if (shop) {
-            if (this.getAttribute('href') === '#') e.preventDefault();
-            window.location.href = shop;
-          } else {
-            e.preventDefault();
-            alert('Der PayPal-Zahlungslink fehlt noch. Verkäufer: ' + sellerEmail + '. Trag deinen PayPal Payment Link oder PayPal.Me-Link in config.js bei \"paypalUrl\" ein.');
-          }
-        });
+<script src="config.js"></script>
+<script>
+(function(){
+  const cfg = window.PST_SHOP || {};
+  const paypal = (cfg.paypalUrl || "").trim();
+  const email = cfg.sellerEmail || "pgmeini@outlook.com";
+  const price = cfg.price || "14,99 €";
+  const discord = cfg.discordUrl || "https://discord.gg/turbodesigns";
+  const version = cfg.version || "v1.0.0";
+  const lastUpdate = cfg.lastUpdate || "Oktober 2026";
+
+  // Config text
+  document.querySelectorAll("[data-price]").forEach(el => el.textContent = price);
+  const seller = document.getElementById("sellerEmail");
+  const modalSeller = document.getElementById("modalSeller");
+  if(seller) seller.textContent = email;
+  if(modalSeller) modalSeller.textContent = email;
+  const versionBadge = document.getElementById("versionBadge");
+  const updateBadge = document.getElementById("updateBadge");
+  if(versionBadge) versionBadge.textContent = "Version " + version;
+  if(updateBadge) updateBadge.textContent = "Update " + lastUpdate;
+
+  ["discordBuy","discordSupport","discordFooter","modalDiscord"].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.href = discord;
+  });
+
+  // Payment modal
+  const modal = document.getElementById("paymentModal");
+  const closeModal = document.getElementById("closeModal");
+  function openModal(){
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden","false");
+  }
+  function hideModal(){
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden","true");
+  }
+  document.querySelectorAll("[data-buy]").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      if(paypal){
+        window.location.href = paypal;
+      } else {
+        openModal();
+      }
+    });
+  });
+  if(closeModal) closeModal.addEventListener("click", hideModal);
+  if(modal) modal.addEventListener("click", e => { if(e.target === modal) hideModal(); });
+  document.addEventListener("keydown", e => { if(e.key === "Escape") hideModal(); });
+
+  // Mobile navigation
+  const menuBtn = document.getElementById("menuBtn");
+  const mobileMenu = document.getElementById("mobileMenu");
+  function closeMenu(){
+    menuBtn.classList.remove("active");
+    mobileMenu.classList.remove("open");
+    menuBtn.setAttribute("aria-expanded","false");
+    document.body.classList.remove("menu-open");
+  }
+  menuBtn.addEventListener("click", () => {
+    const open = !mobileMenu.classList.contains("open");
+    menuBtn.classList.toggle("active", open);
+    mobileMenu.classList.toggle("open", open);
+    menuBtn.setAttribute("aria-expanded", String(open));
+    document.body.classList.toggle("menu-open", open);
+  });
+  mobileMenu.querySelectorAll("a").forEach(a => a.addEventListener("click", closeMenu));
+
+  // Showcase mobile dots
+  const track = document.getElementById("showcaseTrack");
+  const dots = document.getElementById("sliderDots");
+  const cards = [...track.children];
+  cards.forEach((card,i) => {
+    const dot = document.createElement("button");
+    dot.className = "slider-dot" + (i===0 ? " active" : "");
+    dot.type = "button";
+    dot.setAttribute("aria-label","Showcase " + (i+1));
+    dot.addEventListener("click", () => card.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"}));
+    dots.appendChild(dot);
+  });
+  let showcaseTick = null;
+  track.addEventListener("scroll", () => {
+    clearTimeout(showcaseTick);
+    showcaseTick = setTimeout(() => {
+      const center = track.scrollLeft + track.clientWidth/2;
+      let best = 0, dist = Infinity;
+      cards.forEach((card,i) => {
+        const c = card.offsetLeft + card.offsetWidth/2;
+        const d = Math.abs(c-center);
+        if(d < dist){ dist=d; best=i; }
       });
-    })();
-  </script>
+      [...dots.children].forEach((d,i) => d.classList.toggle("active",i===best));
+    },60);
+  },{passive:true});
+
+  // Animated demo reel
+  const reelSlides = [...document.querySelectorAll(".reel-slide")];
+  const reelBtns = [...document.querySelectorAll(".reel-btn")];
+  const reelLabel = document.getElementById("reelLabel");
+  const reelTitle = document.getElementById("reelTitle");
+  const titles = [
+    "Waffe & Preset auswählen",
+    "Mit einem Style starten",
+    "Design individuell anpassen",
+    "Finale .rpf exportieren"
+  ];
+  let reelIndex = 0;
+  let reelTimer;
+
+  function setReel(i, restart=true){
+    reelIndex = i;
+    reelSlides.forEach((s,n) => s.classList.toggle("active",n===i));
+    reelBtns.forEach((b,n) => b.classList.toggle("active",n===i));
+    reelLabel.textContent = "Step 0" + (i+1);
+    reelTitle.textContent = titles[i];
+    if(restart) startReel();
+  }
+  function startReel(){
+    clearInterval(reelTimer);
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    reelTimer = setInterval(() => setReel((reelIndex+1)%reelSlides.length,false), 3300);
+  }
+  reelBtns.forEach((b,i) => b.addEventListener("click", () => setReel(i,true)));
+  startReel();
+})();
+</script>
+
 </body>
 </html>

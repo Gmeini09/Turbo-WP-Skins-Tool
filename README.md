@@ -1,24 +1,31 @@
-# Turbo WP Skins Tool – GitHub Ready
+# Turbo WP Skins Tool – Website V2
 
-Preview-/Verkaufswebsite für Turbo Designs.
+Preview- und Verkaufswebsite für das Turbo Designs WP Skins Tool.
 
-## Zahlung
+## Enthalten
 
-Die Seite ist auf **PayPal · 14,99 € einmalig** umgestellt.
+- neuer Verkaufs-Hero
+- großes Skin Showcase
+- mobile Showcase-Slider
+- animierte Quick-Demo
+- große Editor Preview
+- Supported Weapons Bereich
+- Features & Workflow
+- PayPal-Kaufbereich
+- Discord-Support
+- mobile Navigation
+- FAQ
+- Platzhalter für Impressum / Datenschutz / Nutzungsbedingungen
+- Railway-ready
 
-In `config.js` fehlt nur noch dein echter PayPal Payment Link bzw. PayPal.Me-Link:
+## PayPal verbinden
+
+In `config.js`:
 
 ```js
-window.PST_SHOP = {
-  paypalUrl: "DEIN_PAYPAL_LINK",
-  sellerEmail: "pgmeini@outlook.com",
-  price: "14,99 €",
-  discordUrl: "https://discord.gg/turbodesigns"
-};
+paypalUrl: "DEIN_PAYPAL_LINK"
 ```
 
-Danach funktionieren alle Kaufbuttons direkt.
+## Wichtig
 
-## Hosting
-
-Alle Dateien direkt in das GitHub-Repo `Gmeini09/Turbo-WP-Skins-Tool` hochladen und vorhandene Dateien ersetzen. Railway nutzt `npm start`.
+Die drei rechtlichen Seiten sind nur Platzhalter und müssen vor echtem öffentlichen Verkauf passend zu deiner tatsächlichen Situation ausgefüllt werden.
