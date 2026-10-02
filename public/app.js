@@ -153,6 +153,7 @@ async function syncDiscord() {
     const productLink=key=>data.products.find(p=>p.key===key)?.orderUrl || data.orderChannelUrl;
     viewer.querySelector('[data-order-link]').href=productLink('thumbnail');
     document.querySelector('#hoerproben [data-order-link]').href=productLink('soundpack');
+    briefProductLinks=Object.fromEntries(data.products.map(p=>[p.key,p.orderUrl || data.orderChannelUrl]));updateBriefProduct();
     renderPreviews(data.previews);renderSamples(data);
     previewEmpty.hidden=data.previews.length>0;previewEmpty.textContent='Sobald ein Bild in #thumbnails-preview gepostet wird, erscheint es hier automatisch.';
     for(const product of data.products){
@@ -174,3 +175,32 @@ async function syncDiscord() {
 }
 syncDiscord();setInterval(()=>{if(!document.hidden)syncDiscord();},60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncDiscord();});
+
+// Local-only request preparation. No storage or submission.
+const briefForm=document.getElementById('order-briefing');
+const briefProduct=document.getElementById('brief-product');
+let briefProductLinks={};
+const briefHints={thumbnail:'Hilfreich: Videotitel, gewünschter Text, Motiv und Beispielbilder.',nve:'Hilfreich: gewünschte Lichtstimmung, Look und dein aktuelles Grafik-Setup.',soundpack:'Hilfreich: gewünschte Sounds, Einsatz im Spiel und eine passende Hörprobe.',grafik:'Hilfreich: Format, Einsatz, Text, Farben und vorhandenes Logo.',fivem:'Hilfreich: Art des Assets, Einsatzzweck und technische Anforderungen. Prüfe zuerst die Verfügbarkeit im Discord.',bot:'Hilfreich: gewünschte Funktionen, Nutzerrollen, Abläufe und Hosting-Anforderungen.',bundle:'Hilfreich: gewünschte Produkte und der gemeinsame Stil deines Projekts.'};
+function updateBriefProduct(){
+  if(!briefProduct)return;
+  document.getElementById('brief-product-hint').textContent=briefHints[briefProduct.value];
+  document.getElementById('brief-discord').href=briefProductLinks[briefProduct.value] || 'https://discord.gg/turbodesigns';
+}
+if(briefForm){
+  const output=document.getElementById('brief-output'),copy=document.getElementById('brief-copy'),status=document.getElementById('brief-status');
+  briefProduct.addEventListener('change',updateBriefProduct);
+  briefForm.addEventListener('input',()=>{if(output.value){copy.disabled=true;status.textContent='Deine Angaben haben sich geändert. Erstelle das Briefing erneut.';}});
+  briefForm.addEventListener('submit',event=>{
+    event.preventDefault();
+    const project=document.getElementById('brief-project').value.trim();
+    if(!project){document.getElementById('brief-project').focus();status.textContent='Beschreibe zuerst kurz deine Idee.';return;}
+    const deadline=document.getElementById('brief-deadline').value.trim(),assets=document.getElementById('brief-assets').value.trim();
+    output.value=['Hallo Turbo Designs!','',`Produkt: ${briefProduct.selectedOptions[0].textContent}`,'',`Meine Idee: ${project}`,`Wunschtermin: ${deadline || 'Noch offen'}`,`Vorhandene Materialien: ${assets || 'Noch zu besprechen'}`,'','Bitte stimmt mit mir Lieferumfang, Preis, Korrekturen und Liefertermin ab.'].join('\n');
+    copy.disabled=false;status.textContent='Briefing erstellt. Kopiere den Text und füge ihn im Discord-Ticket ein.';updateBriefProduct();
+  });
+  copy.addEventListener('click',async()=>{
+    if(copy.disabled)return;
+    try{await navigator.clipboard.writeText(output.value);status.textContent='Text kopiert. Öffne den Discord und füge ihn in dein Ticket ein.';}
+    catch{output.focus();output.select();status.textContent='Bitte kopiere den markierten Text mit Strg+C oder über das Kopieren-Menü.';}
+  });
+}
