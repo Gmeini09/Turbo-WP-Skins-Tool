@@ -45,7 +45,7 @@ function setupMotion() {
     element.classList.add('motion-item');
     const siblings = [...element.parentElement.children];
     element.style.setProperty('--motion-delay', `${Math.min(siblings.indexOf(element), 2) * 65}ms`);
-    if (element.getBoundingClientRect().top > window.innerHeight) element.classList.add('motion-pending');
+    // Never hide content while waiting for the observer.
     revealObserver.observe(element);
   });
 }
