@@ -2,6 +2,8 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
+const { getFeed } = require('./discord-feed');
+
 const root = path.join(__dirname, 'public');
 const port = Number(process.env.PORT || 3000);
 
@@ -32,6 +34,12 @@ function safeFile(urlPath) {
 
 const server = http.createServer((req, res) => {
   const route = (req.url || '/').split('?')[0];
+  if (route === '/api/discord-feed') {
+    if (req.method !== 'GET') { res.writeHead(405, { allow: 'GET' }); return res.end(); }
+    const headers = { 'content-type':'application/json; charset=utf-8', 'cache-control':'no-store', 'x-content-type-options':'nosniff' };
+    getFeed().then(data => { res.writeHead(200,headers); res.end(JSON.stringify(data)); }).catch(() => { res.writeHead(503,headers); res.end(JSON.stringify({connected:false})); });
+    return;
+  }
   const legacyProduct = route.match(/^\/(soundpack|weapon-skin)(?:\.html|\/)?$/);
   if (legacyProduct) {
     res.writeHead(301, { location: '/#' + legacyProduct[1], 'cache-control': 'no-cache' });
