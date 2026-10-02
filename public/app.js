@@ -73,4 +73,6 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 window.addEventListener('resize', updateScroll);
 window.addEventListener('load', updateScroll);
+window.addEventListener('hashchange', updateScroll);
+window.addEventListener('pageshow', updateScroll);
 updateScroll();
