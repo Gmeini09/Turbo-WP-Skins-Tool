@@ -150,6 +150,9 @@ async function syncDiscord() {
     syncStatus.textContent='Mit Discord verbunden · automatische Aktualisierung';syncStatus.parentElement.classList.add('is-connected');
     document.getElementById('preview-channel-link').href=data.previewChannelUrl;
     document.querySelectorAll('[data-order-link]').forEach(link=>{link.href=data.orderChannelUrl;});
+    const productLink=key=>data.products.find(p=>p.key===key)?.orderUrl || data.orderChannelUrl;
+    viewer.querySelector('[data-order-link]').href=productLink('thumbnail');
+    document.querySelector('#hoerproben [data-order-link]').href=productLink('soundpack');
     renderPreviews(data.previews);renderSamples(data);
     previewEmpty.hidden=data.previews.length>0;previewEmpty.textContent='Sobald ein Bild in #thumbnails-preview gepostet wird, erscheint es hier automatisch.';
     for(const product of data.products){
