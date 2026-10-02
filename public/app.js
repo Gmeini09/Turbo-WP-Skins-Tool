@@ -76,3 +76,55 @@ window.addEventListener('load', updateScroll);
 window.addEventListener('hashchange', updateScroll);
 window.addEventListener('pageshow', updateScroll);
 updateScroll();
+
+
+// Read-only Discord sync. The bot token stays on the bot service.
+const previewGallery = document.getElementById('thumbnail-gallery');
+const syncStatus = document.getElementById('discord-sync-status');
+const previewEmpty = document.getElementById('preview-empty');
+const euro = new Intl.NumberFormat('de-AT',{style:'currency',currency:'EUR'});
+const shopIds = {thumbnail:'thumbnail',nve:'nve',soundpack:'soundpack',grafik:'design',fivem:'fivem',bot:'bot',bundle:'bundle'};
+let lastPreviewSignature = '';
+let syncBusy = false;
+async function syncDiscord() {
+  if (!previewGallery || syncBusy) return;
+  syncBusy = true;
+  try {
+    const response=await fetch('/api/discord-feed',{cache:'no-store',signal:AbortSignal.timeout(12000)});
+    if(!response.ok) throw new Error('Unavailable');
+    const data=await response.json();
+    if(!data.connected) throw new Error('Disconnected');
+    syncStatus.textContent='Mit Discord verbunden · automatische Aktualisierung';
+    syncStatus.parentElement.classList.add('is-connected');
+    document.getElementById('preview-channel-link').href=data.previewChannelUrl;
+    const signature=JSON.stringify(data.previews);
+    if(signature!==lastPreviewSignature) {
+      previewGallery.replaceChildren();
+      data.previews.forEach((item,index)=>{
+        const figure=document.createElement('figure');figure.className='thumbnail-preview';
+        const link=document.createElement('a');link.href=item.messageUrl;link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label',`Thumbnail ${index+1} im Discord öffnen`);
+        const img=document.createElement('img');img.src=item.image;img.alt=`Turbo Designs Thumbnail ${index+1}`;img.loading='lazy';img.width=1280;img.height=720;link.append(img);
+        const caption=document.createElement('figcaption');const title=document.createElement('strong');title.textContent=`Thumbnail ${String(index+1).padStart(2,'0')}`;const note=document.createElement('span');note.textContent='Discord Preview ↗';caption.append(title,note);figure.append(link,caption);previewGallery.append(figure);
+      });
+      lastPreviewSignature=signature;
+    }
+    previewEmpty.hidden=data.previews.length>0;previewEmpty.textContent='Sobald ein Bild in #thumbnails-preview gepostet wird, erscheint es hier automatisch.';
+    for(const product of data.products) {
+      const id=shopIds[product.key];const card=document.getElementById(`shop-${id}`);if(!card) continue;
+      const price=product.price===null?'Preis im Ticket':euro.format(product.price);
+      card.querySelector('.shop-price strong').textContent=price;
+      card.querySelector('.shop-price > span').textContent=`${product.price===null?'Individuelles Angebot':'Katalogpreis'}${product.etaDays!==null?' · ca. '+product.etaDays+' Tage':''}`;
+      let badge=card.querySelector('.availability');
+      if(!product.enabled&&!badge){badge=document.createElement('span');badge.className='availability';card.querySelector('.shop-label').append(badge);}
+      if(badge){badge.textContent='Derzeit nicht verfügbar';badge.hidden=product.enabled;}
+      const catalog=document.querySelector(`.catalog-list a[href="#shop-${id}"]`);
+      if(catalog){catalog.querySelector('.catalog-price').textContent=price;let status=catalog.querySelector('.catalog-status');if(!product.enabled&&!status){status=document.createElement('small');status.className='catalog-status';catalog.querySelector('strong').append(status);}if(status){status.textContent='Derzeit nicht verfügbar';status.hidden=product.enabled;}}
+    }
+  } catch {
+    syncStatus.textContent='Discord-Synchronisierung gerade nicht erreichbar';syncStatus.parentElement.classList.remove('is-connected');
+    if(!previewGallery.children.length){previewEmpty.hidden=false;previewEmpty.textContent='Du findest alle aktuellen Thumbnail-Vorschauen auch in unserem Discord.';}
+  } finally { syncBusy=false; }
+}
+syncDiscord();
+setInterval(()=>{if(!document.hidden)syncDiscord();},60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncDiscord();});
