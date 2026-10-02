@@ -1,29 +1,11 @@
-# Turbo Designs Creator Website
+# Turbo Designs Creator Suite
 
-Deployment-ready Node.js static site for Railway.
+Website for Soundpack Creator and Weapon Skin Creator.
 
-## Local start
-```bash
-npm start
-```
-Open http://localhost:3000
+Run locally with Node.js 20+: npm start, then open http://localhost:3000.
+Railway uses npm start. Healthcheck: /health.
 
-## Railway
-1. Push this folder to a GitHub repository.
-2. Create a Railway service from the repository.
-3. Railway detects Node automatically.
-4. Start command: `npm start` (normally auto-detected).
-5. Healthcheck path: `/health`.
-6. Generate a public domain in Railway Networking.
+All public pages, scripts and assets live in public/. The server serves only this directory.
+All purchase and support links point to https://discord.gg/turbodesigns.
 
-## Before publishing
-- Fill out `public/impressum.html`.
-- Replace the placeholder data protection text in `public/datenschutz.html` with the legally appropriate version.
-- All purchase/support CTAs currently point to `https://discord.gg/turbodesigns`.
-
-## Structure
-- `/` landing page
-- `/soundpack` Soundpack Creator product page
-- `/weapon-skin` Weapon Skin Creator product page
-- `/impressum`
-- `/datenschutz`
+The existing operator and privacy placeholders in public/impressum.html and public/datenschutz.html still require the owner's actual details.

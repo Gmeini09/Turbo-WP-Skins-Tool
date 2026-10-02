@@ -19,7 +19,9 @@ const mime = {
 };
 
 function safeFile(urlPath) {
-  const clean = decodeURIComponent(urlPath.split('?')[0]);
+  let clean;
+  try { clean = decodeURIComponent(urlPath.split('?')[0]); }
+  catch { return null; }
   let rel = clean === '/' ? 'index.html' : clean.replace(/^\/+/, '');
   if (!path.extname(rel)) rel += '.html';
   const file = path.resolve(root, rel);
@@ -51,7 +53,7 @@ const server = http.createServer((req, res) => {
     const isAsset = /\.(css|js|svg|png|jpe?g|webp|ico)$/.test(ext);
     res.writeHead(200, {
       'content-type': mime[ext] || 'application/octet-stream',
-      'cache-control': isAsset ? 'public, max-age=604800, immutable' : 'no-cache',
+      'cache-control': isAsset ? 'public, max-age=0, must-revalidate' : 'no-cache',
       'x-content-type-options': 'nosniff',
       'x-frame-options': 'SAMEORIGIN',
       'referrer-policy': 'strict-origin-when-cross-origin'
