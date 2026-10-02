@@ -31,6 +31,12 @@ function safeFile(urlPath) {
 }
 
 const server = http.createServer((req, res) => {
+  const route = (req.url || '/').split('?')[0];
+  const legacyProduct = route.match(/^\/(soundpack|weapon-skin)(?:\.html|\/)?$/);
+  if (legacyProduct) {
+    res.writeHead(301, { location: '/#' + legacyProduct[1], 'cache-control': 'no-cache' });
+    return res.end();
+  }
   if (req.url === '/health') {
     res.writeHead(200, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
     return res.end(JSON.stringify({ ok: true }));

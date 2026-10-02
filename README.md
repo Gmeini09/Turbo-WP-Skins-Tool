@@ -1,6 +1,10 @@
 # Turbo Designs Creator Suite
 
-Website for Soundpack Creator and Weapon Skin Creator.
+One-page website for the Turbo Designs Discord shop, Soundpack Creator and Weapon Skin Creator.
+
+The shop includes seven categories. All purchases and support requests go to Discord. Catalog prices and estimated delivery times are confirmed in a private ticket.
+Both product presentations live on the homepage; old product URLs redirect to their corresponding sections.
+Animations respect reduced-motion preferences and content remains available without JavaScript.
 
 Run locally with Node.js 20+: npm start, then open http://localhost:3000.
 Railway uses npm start. Healthcheck: /health.
