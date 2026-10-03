@@ -206,7 +206,7 @@ if(briefForm){
 }
 
 const requestSend=document.getElementById('brief-send');
-let requestToken=null,requestReady=false,requestBusy=false,requestSent=false;
+let requestToken=null,requestReady=false,requestBusy=false,requestSent=false,requestAttempted=false;
 async function checkRequestConnection(){
   if(!requestSend)return;
   const status=document.getElementById('request-status');
@@ -220,7 +220,7 @@ async function checkRequestConnection(){
 if(requestSend){
   const status=document.getElementById('request-status');
   briefForm.addEventListener('input',()=>{
-    if(requestSent){requestSent=false;requestToken=null;status.className='';checkRequestConnection();}
+    if(requestSent||requestAttempted){requestSent=false;requestAttempted=false;requestReady=false;requestSend.disabled=true;requestToken=null;status.className='';checkRequestConnection();}
   });
   requestSend.addEventListener('click',async()=>{
     if(requestBusy||requestSent||!requestReady)return;
@@ -230,7 +230,9 @@ if(requestSend){
     if(!project.value.trim())return error('Beschreibe zuerst deine Idee.',project);
     if(!consent.checked)return error('Bestätige, dass du deine Angaben an das Discord-Team übermitteln möchtest.',consent);
     const payload={token:requestToken,product:briefProduct.value,contact:contact.value.trim(),project:project.value.trim(),deadline:document.getElementById('brief-deadline').value.trim(),assets:document.getElementById('brief-assets').value.trim(),consent:true,website:document.getElementById('brief-website').value};
-    requestBusy=true;requestSend.disabled=true;status.className='';status.textContent='Deine Anfrage wird an Discord übermittelt …';
+    requestBusy=true;requestAttempted=true;requestSend.disabled=true;
+    const locked=[...briefForm.querySelectorAll('input,select,textarea,button'),consent].map(field=>({field,disabled:field.disabled}));locked.forEach(item=>{item.field.disabled=true;});
+    status.className='';status.textContent='Deine Anfrage wird an Discord übermittelt …';
     try{
       const response=await fetch('/api/discord-requests',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(25000)}),data=await response.json();
       if(!response.ok||data.ok!==true){
@@ -240,7 +242,7 @@ if(requestSend){
       }
       requestSent=true;status.className='request-success';status.textContent=`Anfrage im Discord angekommen · ${data.reference}. Öffne unseren Discord, damit das Team mit dir abstimmen kann.`;
     }catch(e){error(e.name==='TimeoutError'?'Die Antwort dauert länger. Versuche es erneut; dieselbe Anfrage wird nicht doppelt angelegt.':e.message);}
-    finally{requestBusy=false;requestSend.disabled=requestSent||!requestReady;}
+    finally{locked.forEach(item=>{item.field.disabled=item.disabled;});requestBusy=false;requestSend.disabled=requestSent||!requestReady;}
   });
   checkRequestConnection();
 }
