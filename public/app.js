@@ -206,43 +206,62 @@ if(briefForm){
 }
 
 const requestSend=document.getElementById('brief-send');
-let requestToken=null,requestReady=false,requestBusy=false,requestSent=false,requestAttempted=false;
+let requestToken=null,requestReady=false,requestBusy=false,requestSent=false,requestAttempted=false,requestChecking=null;
+function updateRequestButton(){
+  requestSend.disabled=requestBusy||requestSent||Boolean(requestChecking);
+  requestSend.textContent=requestBusy?'Wird an Discord gesendet …':requestSent?'Anfrage gesendet ✓':requestChecking?'Verbindung wird geprüft …':requestReady?'Anfrage an Discord senden ↗':'Discord-Verbindung erneut prüfen';
+  requestSend.setAttribute('aria-busy',String(requestBusy||Boolean(requestChecking)));
+}
 async function checkRequestConnection(){
   if(!requestSend)return;
+  if(requestChecking)return requestChecking;
   const status=document.getElementById('request-status');
-  try{
-    const response=await fetch('/api/discord-requests/status',{cache:'no-store',signal:AbortSignal.timeout(15000)}),data=await response.json();
-    if(!response.ok||data.ready!==true||typeof data.token!=='string')throw new Error('Unavailable');
-    requestToken=data.token;requestReady=true;
-    if(!requestSent){requestSend.disabled=false;status.textContent='Mit Discord verbunden · Anfrage geht an das private Team.';}
-  }catch{requestReady=false;requestSend.disabled=true;status.textContent='Direktes Senden ist gerade nicht verfügbar. Kopiere dein Briefing und öffne den Discord.';}
+  requestReady=false;
+  requestChecking=(async()=>{
+    try{
+      const response=await fetch('/api/discord-requests/status',{cache:'no-store',signal:AbortSignal.timeout(15000)}),data=await response.json();
+      if(!response.ok||data.ready!==true||typeof data.token!=='string')throw new Error('Unavailable');
+      requestToken=data.token;
+      // The server accepts challenges only after three seconds.
+      await new Promise(resolve=>setTimeout(resolve,3000));
+      requestReady=true;
+      if(!requestSent){status.className='';status.textContent='Mit Discord verbunden · Anfrage geht an das private Team.';}
+    }catch{requestReady=false;status.className='request-error';status.textContent='Direktes Senden ist gerade nicht verfügbar. Prüfe die Verbindung erneut oder kopiere dein Briefing für den Discord.';}
+  })();
+  updateRequestButton();
+  try{await requestChecking;}finally{requestChecking=null;updateRequestButton();}
 }
+
 if(requestSend){
   const status=document.getElementById('request-status');
+  const clearRequestError=event=>{event.target.removeAttribute('aria-invalid');event.target.removeAttribute('aria-describedby');};
+  briefForm.addEventListener('input',clearRequestError);
+  document.getElementById('brief-consent').addEventListener('change',clearRequestError);
   briefForm.addEventListener('input',()=>{
     if(requestSent||requestAttempted){requestSent=false;requestAttempted=false;requestReady=false;requestSend.disabled=true;requestToken=null;status.className='';checkRequestConnection();}
   });
   requestSend.addEventListener('click',async()=>{
-    if(requestBusy||requestSent||!requestReady)return;
+    if(requestBusy||requestSent||requestChecking)return;
+    if(!requestReady){await checkRequestConnection();return;}
     const contact=document.getElementById('brief-contact'),project=document.getElementById('brief-project'),consent=document.getElementById('brief-consent');
-    const error=(message,field)=>{status.className='request-error';status.textContent=message;field?.focus();};
+    const error=(message,field)=>{status.className='request-error';status.textContent=message;if(field){field.setAttribute('aria-invalid','true');field.setAttribute('aria-describedby','request-status');field.focus();}};
     if(contact.value.trim().length<2)return error('Gib deinen Discord-Benutzernamen an, damit das Team dich zuordnen kann.',contact);
     if(!project.value.trim())return error('Beschreibe zuerst deine Idee.',project);
     if(!consent.checked)return error('Bestätige, dass du deine Angaben an das Discord-Team übermitteln möchtest.',consent);
     const payload={token:requestToken,product:briefProduct.value,contact:contact.value.trim(),project:project.value.trim(),deadline:document.getElementById('brief-deadline').value.trim(),assets:document.getElementById('brief-assets').value.trim(),consent:true,website:document.getElementById('brief-website').value};
-    requestBusy=true;requestAttempted=true;requestSend.disabled=true;
+    requestBusy=true;requestAttempted=true;updateRequestButton();
     const locked=[...briefForm.querySelectorAll('input,select,textarea,button'),consent].map(field=>({field,disabled:field.disabled}));locked.forEach(item=>{item.field.disabled=true;});
     status.className='';status.textContent='Deine Anfrage wird an Discord übermittelt …';
     try{
       const response=await fetch('/api/discord-requests',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(25000)}),data=await response.json();
       if(!response.ok||data.ok!==true){
         if(data.error==='RATE_LIMIT')throw new Error('Du hast bereits mehrere Anfragen gesendet. Bitte warte etwas oder nutze dein Discord-Ticket.');
-        if(data.error==='EXPIRED_TOKEN'){checkRequestConnection();throw new Error('Bitte warte kurz und versuche es erneut. Die Verbindung wird aktualisiert.');}
+        if(data.error==='EXPIRED_TOKEN'){await checkRequestConnection();throw new Error(requestReady?'Die Verbindung wurde aktualisiert. Klicke erneut auf Senden; deine Angaben sind erhalten.':'Die Verbindung ist gerade nicht verfügbar. Prüfe sie erneut oder nutze den Discord.');}
         throw new Error('Die Übermittlung konnte nicht bestätigt werden. Versuche es erneut oder nutze den Discord.');
       }
       requestSent=true;status.className='request-success';status.textContent=`Anfrage im Discord angekommen · ${data.reference}. Öffne unseren Discord, damit das Team mit dir abstimmen kann.`;
     }catch(e){error(e.name==='TimeoutError'?'Die Antwort dauert länger. Versuche es erneut; dieselbe Anfrage wird nicht doppelt angelegt.':e.message);}
-    finally{locked.forEach(item=>{item.field.disabled=item.disabled;});requestBusy=false;requestSend.disabled=requestSent||!requestReady;}
+    finally{locked.forEach(item=>{item.field.disabled=item.disabled;});requestBusy=false;updateRequestButton();}
   });
   checkRequestConnection();
 }
