@@ -184,7 +184,7 @@ let briefProductLinks={},briefReference=null,discordAccount=null;
 function chooseBriefProduct(key){
   if(requestBusy)return;
   if([...briefProduct.options].some(option=>option.value===key)){briefProduct.value=key;briefProduct.dispatchEvent(new Event('change',{bubbles:true}));briefProduct.dispatchEvent(new Event('input',{bubbles:true}));}
-  location.hash='anfrage';document.getElementById('brief-project').focus({preventScroll:true});
+  location.hash='anfrage';document.getElementById('anfrage').scrollIntoView({behavior:reducedMotion.matches?'auto':'smooth',block:'start'});document.getElementById('brief-project').focus({preventScroll:true});
 }
 function renderBriefReference(){
   const box=document.getElementById('brief-reference');if(!box)return;box.hidden=!briefReference;
@@ -196,7 +196,7 @@ function selectBriefReference(item){
 const mobileRequest=document.querySelector('.mobile-request');
 if(mobileRequest&&'IntersectionObserver' in window){new IntersectionObserver(entries=>{mobileRequest.hidden=entries.some(entry=>entry.isIntersecting);},{rootMargin:'-82px 0px 0px 0px'}).observe(document.getElementById('anfrage'));}
 document.querySelectorAll('[data-brief-product]').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();chooseBriefProduct(link.dataset.briefProduct);}));
-document.getElementById('viewer-reference')?.addEventListener('click',()=>{const item=previews[selectedPreview];viewer.close();selectBriefReference(item);});
+document.getElementById('viewer-reference')?.addEventListener('click',()=>{const item=previews[selectedPreview];returnFocus=document.getElementById('brief-project');viewer.close();selectBriefReference(item);});
 document.getElementById('brief-reference-remove')?.addEventListener('click',()=>{if(requestBusy)return;briefReference=null;renderBriefReference();briefForm.dispatchEvent(new Event('input',{bubbles:true}));});
 const briefHints={thumbnail:'Hilfreich: Videotitel, gewünschter Text, Motiv und Beispielbilder.',nve:'Hilfreich: gewünschte Lichtstimmung, Look und dein aktuelles Grafik-Setup.',soundpack:'Hilfreich: gewünschte Sounds, Einsatz im Spiel und eine passende Hörprobe.',grafik:'Hilfreich: Format, Einsatz, Text, Farben und vorhandenes Logo.',fivem:'Hilfreich: Art des Assets, Einsatzzweck und technische Anforderungen. Prüfe zuerst die Verfügbarkeit im Discord.',bot:'Hilfreich: gewünschte Funktionen, Nutzerrollen, Abläufe und Hosting-Anforderungen.',bundle:'Hilfreich: gewünschte Produkte und der gemeinsame Stil deines Projekts.'};
 function updateBriefProduct(){
