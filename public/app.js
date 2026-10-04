@@ -119,7 +119,7 @@ function renderPreviews(items) {
     const img=document.createElement('img');img.src=item.image;img.alt=`Turbo Designs Thumbnail ${index+1}`;img.loading='lazy';img.decoding='async';img.width=1280;img.height=720;button.append(img);
     const caption=document.createElement('figcaption');const title=document.createElement('strong');title.textContent=`Thumbnail ${String(index+1).padStart(2,'0')}`;
     const link=document.createElement('a');link.href=item.messageUrl;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Im Discord ↗';link.setAttribute('aria-label',`Thumbnail ${index+1} im Discord öffnen`);
-    caption.append(title,link);figure.append(button,caption);previewGallery.append(figure);
+    const reference=document.createElement('button');reference.type='button';reference.className='preview-reference';reference.textContent='Als Stilreferenz anfragen →';reference.setAttribute('aria-label',`Thumbnail ${index+1} als Stilreferenz anfragen`);reference.addEventListener('click',()=>selectBriefReference(item));caption.append(title,link,reference);figure.append(button,caption);previewGallery.append(figure);
   });
   if(viewer.open){const index=previews.findIndex(p=>p.id===currentId);if(previews.length)showPreview(index<0?0:index);else viewer.close();}
   lastPreviewSignature=signature;
@@ -149,6 +149,7 @@ async function syncDiscord() {
     if(!response.ok)throw new Error('Unavailable');const data=await response.json();if(!data.connected)throw new Error('Disconnected');
     syncStatus.textContent='Mit Discord verbunden · automatische Aktualisierung';syncStatus.parentElement.classList.add('is-connected');
     document.getElementById('preview-channel-link').href=data.previewChannelUrl;
+    if(data.reviewsChannelUrl&&document.getElementById('reviews-channel-link'))document.getElementById('reviews-channel-link').href=data.reviewsChannelUrl;
     document.querySelectorAll('[data-order-link]').forEach(link=>{link.href=data.orderChannelUrl;});
     const productLink=key=>data.products.find(p=>p.key===key)?.orderUrl || data.orderChannelUrl;
     viewer.querySelector('[data-order-link]').href=productLink('thumbnail');
@@ -179,7 +180,24 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncDiscor
 // Briefing creation stays local; direct sending is a separate explicit action.
 const briefForm=document.getElementById('order-briefing');
 const briefProduct=document.getElementById('brief-product');
-let briefProductLinks={};
+let briefProductLinks={},briefReference=null,discordAccount=null;
+function chooseBriefProduct(key){
+  if(requestBusy)return;
+  if([...briefProduct.options].some(option=>option.value===key)){briefProduct.value=key;briefProduct.dispatchEvent(new Event('change',{bubbles:true}));briefProduct.dispatchEvent(new Event('input',{bubbles:true}));}
+  location.hash='anfrage';document.getElementById('brief-project').focus({preventScroll:true});
+}
+function renderBriefReference(){
+  const box=document.getElementById('brief-reference');if(!box)return;box.hidden=!briefReference;
+  if(briefReference){document.getElementById('brief-reference-image').src=briefReference.image;document.getElementById('brief-reference-link').href=briefReference.messageUrl;}
+}
+function selectBriefReference(item){
+  if(!item||requestBusy)return;briefReference={image:item.image,messageUrl:item.messageUrl};renderBriefReference();chooseBriefProduct('thumbnail');
+}
+const mobileRequest=document.querySelector('.mobile-request');
+if(mobileRequest&&'IntersectionObserver' in window){new IntersectionObserver(entries=>{mobileRequest.hidden=entries.some(entry=>entry.isIntersecting);},{rootMargin:'-82px 0px 0px 0px'}).observe(document.getElementById('anfrage'));}
+document.querySelectorAll('[data-brief-product]').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();chooseBriefProduct(link.dataset.briefProduct);}));
+document.getElementById('viewer-reference')?.addEventListener('click',()=>{const item=previews[selectedPreview];viewer.close();selectBriefReference(item);});
+document.getElementById('brief-reference-remove')?.addEventListener('click',()=>{if(requestBusy)return;briefReference=null;renderBriefReference();briefForm.dispatchEvent(new Event('input',{bubbles:true}));});
 const briefHints={thumbnail:'Hilfreich: Videotitel, gewünschter Text, Motiv und Beispielbilder.',nve:'Hilfreich: gewünschte Lichtstimmung, Look und dein aktuelles Grafik-Setup.',soundpack:'Hilfreich: gewünschte Sounds, Einsatz im Spiel und eine passende Hörprobe.',grafik:'Hilfreich: Format, Einsatz, Text, Farben und vorhandenes Logo.',fivem:'Hilfreich: Art des Assets, Einsatzzweck und technische Anforderungen. Prüfe zuerst die Verfügbarkeit im Discord.',bot:'Hilfreich: gewünschte Funktionen, Nutzerrollen, Abläufe und Hosting-Anforderungen.',bundle:'Hilfreich: gewünschte Produkte und der gemeinsame Stil deines Projekts.'};
 function updateBriefProduct(){
   if(!briefProduct)return;
@@ -195,7 +213,7 @@ if(briefForm){
     const project=document.getElementById('brief-project').value.trim();
     if(!project){document.getElementById('brief-project').focus();status.textContent='Beschreibe zuerst kurz deine Idee.';return;}
     const deadline=document.getElementById('brief-deadline').value.trim(),assets=document.getElementById('brief-assets').value.trim();
-    output.value=['Hallo Turbo Designs!','',`Produkt: ${briefProduct.selectedOptions[0].textContent}`,'',`Discord-Name: ${document.getElementById('brief-contact')?.value.trim() || 'Noch offen'}`,`Meine Idee: ${project}`,`Wunschtermin: ${deadline || 'Noch offen'}`,`Vorhandene Materialien: ${assets || 'Noch zu besprechen'}`,'','Bitte stimmt mit mir Lieferumfang, Preis, Korrekturen und Liefertermin ab.'].join('\n');
+    output.value=['Hallo Turbo Designs!','',`Produkt: ${briefProduct.selectedOptions[0].textContent}`,'',`Discord-Name: ${document.getElementById('brief-contact')?.value.trim() || 'Noch offen'}`,`Meine Idee: ${project}`,`Wunschtermin: ${deadline || 'Noch offen'}`,`Vorhandene Materialien: ${assets || 'Noch zu besprechen'}`,...(briefReference?[`Thumbnail-Stilreferenz: ${briefReference.messageUrl}`]:[]),'','Bitte stimmt mit mir Lieferumfang, Preis, Korrekturen und Liefertermin ab.'].join('\n');
     copy.disabled=false;status.textContent='Briefing erstellt. Kopiere den Text und füge ihn im Discord-Ticket ein.';updateBriefProduct();
   });
   copy.addEventListener('click',async()=>{
@@ -238,7 +256,7 @@ if(requestSend){
   briefForm.addEventListener('input',clearRequestError);
   document.getElementById('brief-consent').addEventListener('change',clearRequestError);
   briefForm.addEventListener('input',()=>{
-    if(requestSent||requestAttempted){requestSent=false;requestAttempted=false;requestReady=false;requestSend.disabled=true;requestToken=null;status.className='';checkRequestConnection();}
+    if(!requestBusy&&(requestSent||requestAttempted)){requestSent=false;requestAttempted=false;requestReady=false;requestSend.disabled=true;requestToken=null;status.className='';checkRequestConnection();}
   });
   requestSend.addEventListener('click',async()=>{
     if(requestBusy||requestSent||requestChecking)return;
@@ -248,20 +266,59 @@ if(requestSend){
     if(contact.value.trim().length<2)return error('Gib deinen Discord-Benutzernamen an, damit das Team dich zuordnen kann.',contact);
     if(!project.value.trim())return error('Beschreibe zuerst deine Idee.',project);
     if(!consent.checked)return error('Bestätige, dass du deine Angaben an das Discord-Team übermitteln möchtest.',consent);
-    const payload={token:requestToken,product:briefProduct.value,contact:contact.value.trim(),project:project.value.trim(),deadline:document.getElementById('brief-deadline').value.trim(),assets:document.getElementById('brief-assets').value.trim(),consent:true,website:document.getElementById('brief-website').value};
+    const payload={token:requestToken,product:briefProduct.value,contact:contact.value.trim(),project:project.value.trim(),deadline:document.getElementById('brief-deadline').value.trim(),assets:document.getElementById('brief-assets').value.trim(),consent:true,reference:briefReference?.messageUrl || '',website:document.getElementById('brief-website').value};
     requestBusy=true;requestAttempted=true;updateRequestButton();
-    const locked=[...briefForm.querySelectorAll('input,select,textarea,button'),consent].map(field=>({field,disabled:field.disabled}));locked.forEach(item=>{item.field.disabled=true;});
+    const locked=[...briefForm.querySelectorAll('input,select,textarea,button'),consent,document.getElementById('discord-logout')].filter(Boolean).map(field=>({field,disabled:field.disabled}));locked.forEach(item=>{item.field.disabled=true;});
     status.className='';status.textContent='Deine Anfrage wird an Discord übermittelt …';
     try{
       const response=await fetch('/api/discord-requests',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(25000)}),data=await response.json();
       if(!response.ok||data.ok!==true){
+        if(data.error==='JOIN_REQUIRED')throw new Error('Tritt zuerst unserem Discord bei und sende die Anfrage anschließend erneut.');
+        if(data.error==='TICKET_UNAVAILABLE')throw new Error('Dein persönliches Ticket ist gerade nicht verfügbar. Bitte öffne den Discord.');
         if(data.error==='RATE_LIMIT')throw new Error('Du hast bereits mehrere Anfragen gesendet. Bitte warte etwas oder nutze dein Discord-Ticket.');
         if(data.error==='EXPIRED_TOKEN'){await checkRequestConnection();throw new Error(requestReady?'Die Verbindung wurde aktualisiert. Klicke erneut auf Senden; deine Angaben sind erhalten.':'Die Verbindung ist gerade nicht verfügbar. Prüfe sie erneut oder nutze den Discord.');}
         throw new Error('Die Übermittlung konnte nicht bestätigt werden. Versuche es erneut oder nutze den Discord.');
       }
-      requestSent=true;status.className='request-success';status.textContent=`Anfrage im Discord angekommen · ${data.reference}. Öffne unseren Discord, damit das Team mit dir abstimmen kann.`;
+      requestSent=true;status.className='request-success';status.textContent=`Anfrage im Discord angekommen · ${data.reference}. ${data.ticketUrl?'Öffne dein persönliches Ticket für die Abstimmung.':'Öffne unseren Discord, damit das Team mit dir abstimmen kann.'}`;
+      if(/^https:\/\/discord\.com\/channels\/1531989453168578650\/\d{17,20}$/.test(data.ticketUrl||'')){const link=document.getElementById('brief-discord');link.href=data.ticketUrl;link.textContent='Dein persönliches Ticket öffnen ↗';}
     }catch(e){error(e.name==='TimeoutError'?'Die Antwort dauert länger. Versuche es erneut; dieselbe Anfrage wird nicht doppelt angelegt.':e.message);}
     finally{locked.forEach(item=>{item.field.disabled=item.disabled;});requestBusy=false;updateRequestButton();}
   });
   checkRequestConnection();
 }
+
+async function loadDiscordAccount(){
+  const panel=document.getElementById('discord-login');if(!panel)return;
+  try{
+    const response=await fetch('/api/discord-account',{cache:'no-store',signal:AbortSignal.timeout(10000)});if(!response.ok)return;
+    const data=await response.json();panel.hidden=!data.loginAvailable;discordAccount=data.user;
+    const contact=document.getElementById('brief-contact');contact.readOnly=Boolean(discordAccount);
+    document.getElementById('discord-login-link').hidden=Boolean(discordAccount);
+    document.getElementById('discord-logout').hidden=!discordAccount;
+    document.getElementById('discord-account').textContent=discordAccount?`Angemeldet als ${discordAccount.username} · Discord-Name verifiziert`:'Melde dich an, um deine Anfrage einem persönlichen Discord-Ticket zuzuordnen.';
+    if(discordAccount){contact.value=discordAccount.username;contact.dispatchEvent(new Event('input',{bubbles:true}));}
+  }catch{/* The name-based request flow stays available. */}
+}
+document.getElementById('discord-login-link')?.addEventListener('click',()=>{
+  try{sessionStorage.setItem('turbo-login-draft',JSON.stringify({at:Date.now(),product:briefProduct.value,contact:document.getElementById('brief-contact').value,project:document.getElementById('brief-project').value,deadline:document.getElementById('brief-deadline').value,assets:document.getElementById('brief-assets').value,reference:briefReference}));}catch{}
+});
+document.getElementById('discord-logout')?.addEventListener('click',async()=>{
+  if(requestBusy)return;const button=document.getElementById('discord-logout');button.disabled=true;
+  try{const response=await fetch('/auth/discord/logout',{method:'POST',signal:AbortSignal.timeout(10000)});if(!response.ok)throw new Error();discordAccount=null;document.getElementById('brief-contact').value='';await loadDiscordAccount();document.getElementById('brief-contact').dispatchEvent(new Event('input',{bubbles:true}));}
+  catch{document.getElementById('discord-account').textContent='Abmelden ist gerade nicht möglich. Versuche es erneut.';}finally{button.disabled=false;}
+});
+try{
+  const raw=sessionStorage.getItem('turbo-login-draft');sessionStorage.removeItem('turbo-login-draft');const draft=raw?JSON.parse(raw):null;
+  if(draft&&Date.now()-draft.at>=0&&Date.now()-draft.at<900000){
+    if([...briefProduct.options].some(option=>option.value===draft.product))briefProduct.value=draft.product;
+    for(const [key,max] of [['contact',64],['project',1500],['deadline',100],['assets',300]])if(typeof draft[key]==='string')document.getElementById('brief-'+key).value=draft[key].slice(0,max);
+    if(/^https:\/\/discord\.com\/channels\/1531989453168578650\/1550470150086729748\/\d{17,20}$/.test(draft.reference?.messageUrl||'')){try{const url=new URL(draft.reference.image);if(url.protocol==='https:'&&['cdn.discordapp.com','media.discordapp.net'].includes(url.hostname)&&url.pathname.startsWith('/attachments/')){briefReference=draft.reference;renderBriefReference();}}catch{}}
+    updateBriefProduct();
+  }
+}catch{}
+const loginResult=new URLSearchParams(location.search).get('discord');
+if(['failed','cancelled','unavailable'].includes(loginResult)){
+  const status=document.getElementById('brief-status');status.textContent=loginResult==='cancelled'?'Discord-Anmeldung abgebrochen. Du kannst deine Anfrage auch ohne Anmeldung senden.':loginResult==='unavailable'?'Discord-Anmeldung ist noch nicht eingerichtet. Du kannst deine Anfrage mit deinem Discord-Namen senden.':'Die Discord-Anmeldung konnte nicht abgeschlossen werden. Versuche es erneut oder sende mit deinem Discord-Namen.';
+  history.replaceState(null,'',location.pathname+'#anfrage');
+}
+loadDiscordAccount();
