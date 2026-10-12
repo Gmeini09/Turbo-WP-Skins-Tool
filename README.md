@@ -13,3 +13,7 @@ All public pages, scripts and assets live in public/. The server serves only thi
 All purchase and support links point to https://discord.gg/turbodesigns.
 
 The existing operator and privacy placeholders in public/impressum.html and public/datenschutz.html still require the owner's actual details.
+
+## Studio redesign
+
+The storefront includes product search, category filters, price sorting, device-local favorites, dark/light appearance, a six-item expandable portfolio, skin preview selection and device-local briefing drafts including thumbnail references. The existing Discord feed and explicit request submission remain in app.js; storefront.js adds browser-local interactions. Public catalog data is validated by discord-feed.js. No new dependencies are required. Local persistence is documented in public/datenschutz.html.

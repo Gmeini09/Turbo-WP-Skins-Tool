@@ -163,7 +163,7 @@ async function syncDiscord() {
       card.querySelector('.shop-price strong').textContent=price;
       card.querySelector('.shop-price > span').textContent=`${product.price===null?'Individuelles Angebot':'Katalogpreis'}${product.etaDays!==null?' · ca. '+product.etaDays+' Tage':''}`;
       const order=card.querySelector('.shop-order a');order.href=product.orderUrl || data.orderChannelUrl;
-      order.textContent=product.enabled?(product.key==='thumbnail'?'Thumbnail anfragen ↗':'Im Discord bestellen ↗'):'Verfügbarkeit anfragen ↗';
+      order.textContent='Discord ↗';order.setAttribute('aria-label',`${card.querySelector('h3').textContent} ${product.enabled?'im Discord anfragen':'Verfügbarkeit im Discord prüfen'}`);
       let badge=card.querySelector('.availability');if(!product.enabled&&!badge){badge=document.createElement('span');badge.className='availability';card.querySelector('.shop-label').append(badge);}if(badge){badge.textContent='Derzeit nicht verfügbar';badge.hidden=product.enabled;}
       const catalog=document.querySelector(`.catalog-list a[href="#shop-${id}"]`);
       if(catalog){catalog.querySelector('.catalog-price').textContent=price;let status=catalog.querySelector('.catalog-status');if(!product.enabled&&!status){status=document.createElement('small');status.className='catalog-status';catalog.querySelector('strong').append(status);}if(status){status.textContent='Derzeit nicht verfügbar';status.hidden=product.enabled;}}
