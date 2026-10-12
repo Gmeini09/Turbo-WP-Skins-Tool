@@ -17,3 +17,7 @@ The existing operator and privacy placeholders in public/impressum.html and publ
 ## Studio redesign
 
 The storefront includes product search, category filters, price sorting, device-local favorites, dark/light appearance, a six-item expandable portfolio, skin preview selection and device-local briefing drafts including thumbnail references. The existing Discord feed and explicit request submission remain in app.js; storefront.js adds browser-local interactions. Public catalog data is validated by discord-feed.js. No new dependencies are required. Local persistence is documented in public/datenschutz.html.
+
+## Website orders
+
+Website orders and partnerships require Discord authorization. A signed internal OAuth bridge on the existing bot exchanges the code; no client secret or Discord access token is delivered to the browser. The website stores an encrypted HttpOnly session and forwards only server-verified identity. Signed requests create private per-order or partnership tickets with retry deduplication. Soundpack Tool plans are priced at EUR 20 lifetime, EUR 15 month, EUR 10 week by the bot. The weapon skin tool is coming soon. NVE and sound previews use their dedicated Discord channels. Gallery curation uses Discord attachment IDs so incoming posts cannot shift the removed or deferred thumbnails. Run npm test for the website checks.

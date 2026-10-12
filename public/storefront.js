@@ -195,7 +195,7 @@
   const draftStatus = document.getElementById('draft-status');
   const draftClear = document.getElementById('draft-clear');
   const draftKey = 'turbo-designs:brief:v1';
-  const fieldLimits = { product: 40, contact: 64, project: 1500, deadline: 100, assets: 300 };
+  const fieldLimits = { product: 40, plan: 16, contact: 64, project: 1500, deadline: 100, assets: 300 };
   const briefFields = Object.fromEntries(Object.keys(fieldLimits).map(key => [key, document.getElementById(`brief-${key}`)]));
   let draftTimer;
   let clearingDraft = false;
@@ -207,6 +207,8 @@
       const image = new URL(reference.image);
       if (image.protocol !== 'https:' || !['cdn.discordapp.com', 'media.discordapp.net'].includes(image.hostname) ||
         !image.pathname.startsWith('/attachments/')) return null;
+      const curation = window.TurboGalleryCuration;
+      if (curation?.excludedStableIds.includes(curation.stablePreviewId(reference))) return null;
       return { image: image.href, messageUrl: reference.messageUrl };
     } catch { return null; }
   };
@@ -248,8 +250,8 @@
       Object.entries(briefFields).forEach(([key, field]) => {
         if (!field || field.disabled || field.readOnly || typeof draft.fields[key] !== 'string') return;
         const value = draft.fields[key].slice(0, fieldLimits[key]);
-        if (key === 'product' && ![...field.options].some(option => option.value === value)) return;
-        if (field.value && key !== 'product') return;
+        if ((key === 'product' || key === 'plan') && ![...field.options].some(option => option.value === value)) return;
+        if (field.value && !['product', 'plan'].includes(key)) return;
         field.value = value;
         restored ||= Boolean(value && key !== 'product');
       });
@@ -288,7 +290,7 @@
       draftTimer = null;
       Object.entries(briefFields).forEach(([key, field]) => {
         if (!field || field.readOnly) return;
-        field.value = key === 'product' ? field.options[0]?.value || '' : '';
+        field.value = ['product', 'plan'].includes(key) ? field.options[0]?.value || '' : '';
       });
       const output = document.getElementById('brief-output');
       const copy = document.getElementById('brief-copy');
