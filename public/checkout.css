@@ -1,0 +1,50 @@
+/* Compact checkout, scoped to the request section. */
+#anfrage .checkout-layout{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:start;gap:26px}
+#anfrage .checkout-account{display:flex;align-items:center;gap:12px;padding:19px 28px}
+#anfrage .checkout-account p{flex:1;margin:0;font-size:11px;line-height:1.7}
+#anfrage .checkout-account-icon{display:grid;place-items:center;width:30px;height:30px;flex-shrink:0;border:1px solid var(--line);border-radius:50%;color:var(--accent);font-size:15px}
+#anfrage .checkout-account .text-button{flex-shrink:0}
+#anfrage #order-briefing>label{font-size:12px;margin-bottom:20px}
+#anfrage #order-briefing textarea{min-height:140px;font-size:13px}
+#anfrage #brief-product-hint{font-size:10px;margin-top:-10px;margin-bottom:22px}
+#anfrage .checkout-extras{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:22px}
+#anfrage .checkout-extras>summary{display:flex;align-items:center;gap:10px;padding:17px 0;cursor:pointer;list-style:none;font-size:12px;font-weight:550}
+#anfrage .checkout-extras>summary::-webkit-details-marker{display:none}
+#anfrage .checkout-extras>summary>span{font-size:10px;font-weight:400;color:var(--muted)}
+#anfrage .checkout-extras>summary>b{margin-left:auto;font-size:18px;font-weight:400;color:var(--muted)}
+#anfrage .checkout-extras[open]>summary>b{transform:rotate(45deg)}
+#anfrage .checkout-extras>.form-row{padding-top:4px}
+#anfrage .checkout-extras label{font-size:11px;margin-bottom:19px}
+#anfrage .checkout-draft-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
+#anfrage .checkout-draft-row>span{color:var(--muted);font-size:9px;line-height:1.6}
+#anfrage .checkout-draft-row .text-button{font-size:10px;white-space:nowrap}
+#anfrage .checkout-summary{position:sticky;top:100px;padding:27px}
+#anfrage .checkout-summary>h3{font-size:28px;letter-spacing:-.035em;line-height:1.2;margin:12px 0 24px}
+#anfrage .checkout-summary-main{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+#anfrage .checkout-summary-main h4{font-size:18px;font-weight:550;line-height:1.35;letter-spacing:-.02em;margin:0}
+#anfrage #brief-summary-plan{display:inline-block;margin-top:6px;color:var(--accent);font-size:10px}
+#anfrage #brief-summary-price{display:block;text-align:right;font-size:19px;font-weight:550;white-space:nowrap;line-height:1.4;letter-spacing:-.02em}
+#anfrage .checkout-price-note{color:var(--muted);font-size:10px;line-height:1.8;margin:13px 0 20px}
+#anfrage .checkout-summary-details{border-block:1px solid var(--line);margin:0;padding:16px 0;display:grid;gap:13px}
+#anfrage .checkout-summary-details>div{display:grid;grid-template-columns:95px minmax(0,1fr);gap:15px;align-items:start}
+#anfrage .checkout-summary-details dt{font-size:10px;color:var(--muted);line-height:1.75}
+#anfrage .checkout-summary-details dd{font-size:11px;line-height:1.7;overflow-wrap:anywhere;margin:0;white-space:pre-wrap}
+#anfrage .checkout-summary-details .checkout-summary-idea{grid-template-columns:1fr;gap:5px}
+#anfrage .checkout-summary-idea dd{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden}
+#anfrage .checkout-summary-details a{color:var(--accent);font-size:10px;text-decoration:underline;text-underline-offset:3px}
+#anfrage .checkout-steps{grid-template-columns:1fr 1fr;gap:15px;margin:20px 0 0}
+#anfrage .checkout-steps li{gap:9px}
+#anfrage .checkout-steps li>span{font-size:8px;padding:5px;margin-top:1px}
+#anfrage .checkout-steps strong{font-size:10px;line-height:1.5}
+#anfrage .checkout-steps p{font-size:9px;line-height:1.7}
+#anfrage .checkout-summary .direct-request{margin-top:21px;padding-top:20px}
+#anfrage .checkout-summary .consent{font-size:10px;line-height:1.8}
+#anfrage .checkout-summary .direct-request>.btn{min-height:47px;margin-top:16px;font-size:12px}
+#anfrage .checkout-summary #request-status{font-size:10px;margin-top:12px;line-height:1.8}
+#anfrage .checkout-summary #request-status:empty{margin:0}
+#anfrage .checkout-receipt{margin-top:18px;padding:13px 15px;background:var(--surface);border:1px solid var(--line);border-radius:7px}
+#anfrage .checkout-receipt .text-link{font-size:11px;line-height:1.7}
+#anfrage :is(summary,a,button):focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+@media(max-width:900px){#anfrage .checkout-layout{grid-template-columns:1fr;gap:20px}#anfrage .checkout-summary{position:static}#anfrage .checkout-summary-main h4{font-size:20px}#anfrage #brief-summary-price{font-size:22px}#anfrage .checkout-summary-idea dd{-webkit-line-clamp:5}}
+@media(max-width:640px){#anfrage .checkout-account{padding:17px 20px;gap:10px}#anfrage .checkout-account p{font-size:10px}#anfrage .checkout-summary{padding:24px 20px}#anfrage .checkout-summary>h3{font-size:26px;margin-bottom:21px}#anfrage .checkout-summary-main{gap:12px}#anfrage .checkout-summary-main h4{font-size:17px}#anfrage #brief-summary-price{font-size:18px}#anfrage .checkout-price-note{font-size:10px}#anfrage .checkout-summary-details>div{grid-template-columns:88px minmax(0,1fr);gap:12px}#anfrage .checkout-summary-details .checkout-summary-idea{grid-template-columns:1fr;gap:5px}#anfrage .checkout-summary-details dd{font-size:12px}#anfrage .checkout-steps{gap:13px}#anfrage .checkout-steps strong{font-size:10px}#anfrage .checkout-steps p{font-size:9px}#anfrage .checkout-draft-row>span{font-size:9px;max-width:160px}#anfrage .checkout-extras>.form-row{grid-template-columns:1fr}#anfrage .checkout-summary .direct-request>.btn{min-height:49px}}
+@media(prefers-reduced-motion:reduce){#anfrage .checkout-extras>summary>b{transition:none}}

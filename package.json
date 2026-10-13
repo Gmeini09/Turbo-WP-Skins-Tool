@@ -5,7 +5,7 @@
   "description": "Turbo Designs landing page for Soundpack Creator and Weapon Skin Creator",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test tests/discord-feed.test.js"
+    "test": "node --test tests/discord-feed.test.js tests/audio-preview.test.js"
   },
   "engines": {
     "node": ">=20"

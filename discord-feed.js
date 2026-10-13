@@ -23,8 +23,26 @@ function validFeed(data) {
   const samples = (Array.isArray(data.samples) ? data.samples : []).slice(0,12).filter(p=>allowed(p.url)).map(p=>({id:String(p.id),url:p.url,title:String(p.title || 'Soundpack Hörprobe').slice(0,100),kind:p.kind==='video'?'video':'audio',messageUrl:discordLink(p.messageUrl)}));
   const previews = curatePreviews(data.previews.slice(0,48).filter(p=>allowed(p.image)).map(p=>({id:String(p.id),image:p.image,messageUrl:discordLink(p.messageUrl)})));
   const nvePreviews = (Array.isArray(data.nvePreviews) ? data.nvePreviews : []).slice(0,16).filter(p=>allowed(p.image || p.url)).map(p=>({id:String(p.id),title:String(p.title || 'NVE Preview').slice(0,100),kind:p.kind==='video'?'video':'image',url:p.image || p.url,messageUrl:discordLink(p.messageUrl)}));
+  const plainReviewText = (value, max) => typeof value === 'string' ? value
+    .replace(/<@!?\d+>|<@&\d+>|<#\d+>|<a?:\w+:\d+>/g,'')
+    .replace(/\b(?:UF-\d{4,}|WEB-[a-f\d]{8}|LIC-[a-z\d-]+)\b/gi,'').replace(/\b\d{17,20}\b/g,'')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g,'$1').replace(/https?:\/\/\S+|[\w.+-]+@[\w.-]+\.[a-z]{2,}/gi,'')
+    .replace(/<[^>]*>/g,'').replace(/[\u0000-\u001f\u007f\u202a-\u202e\u2066-\u2069`*_~|]/g,' ')
+    .replace(/\s+/g,' ').trim().slice(0,max).trim() : '';
+  const reviews = [];
+  const reviewLinks = new Set();
+  for (const review of (Array.isArray(data.reviews) ? data.reviews : []).slice(0,24)) {
+    if (!review || typeof review !== 'object' || !Number.isInteger(review.rating) || review.rating<1 || review.rating>5 ||
+        typeof review.messageUrl !== 'string' || !/^https:\/\/discord\.com\/channels\/1531989453168578650\/1550121564870025398\/\d{17,20}$/.test(review.messageUrl) || reviewLinks.has(review.messageUrl)) continue;
+    const text=plainReviewText(review.text,320),authorDisplayName=plainReviewText(review.authorDisplayName,64);
+    const timestamp=typeof review.date==='string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/.test(review.date) ? Date.parse(review.date):NaN;
+    if (!text || !authorDisplayName || !Number.isFinite(timestamp) || timestamp<946684800000 || timestamp>Date.now()+300000 || new Date(timestamp).toISOString()!==review.date) continue;
+    reviews.push({text,rating:review.rating,authorDisplayName,date:new Date(timestamp).toISOString(),messageUrl:review.messageUrl,...(PRODUCTS.has(review.productKey)&&review.productKey!=='partnership'?{productKey:review.productKey}:{})});
+    reviewLinks.add(review.messageUrl);
+    if (reviews.length===12) break;
+  }
   return {
-    connected:true,updatedAt:data.updatedAt,previews,samples,nvePreviews,
+    connected:true,updatedAt:data.updatedAt,previews,samples,nvePreviews,reviews,reviewsAvailable:data.reviewsAvailable===true,
     samplesAvailable:data.samplesAvailable===true,nveAvailable:data.nveAvailable===true,
     soundChannelUrl:discordLink(data.soundChannelUrl),nveChannelUrl:discordLink(data.nveChannelUrl || 'https://discord.com/channels/1531989453168578650/1550470513070178374'),
     orderChannelUrl:discordLink(data.orderChannelUrl),reviewsChannelUrl:discordLink(data.reviewsChannelUrl),previewChannelUrl:discordLink(data.previewChannelUrl),

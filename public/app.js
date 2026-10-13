@@ -159,8 +159,10 @@ async function syncDiscord(){
     const empty=document.getElementById('preview-empty');if(empty){empty.hidden=previews.length>0;empty.textContent='Weitere Arbeiten findest du in unserem Discord.';}
     const previewLink=document.getElementById('preview-channel-link');if(previewLink)previewLink.href=data.previewChannelUrl;
     const reviewLink=document.getElementById('reviews-channel-link');if(reviewLink&&data.reviewsChannelUrl)reviewLink.href=data.reviewsChannelUrl;
-    briefProductLinks=Object.fromEntries(data.products.map(p=>[p.key,p.orderUrl||data.orderChannelUrl]));
-    for(const product of data.products){
+    const products=Array.isArray(data.products)?data.products:[];
+    briefCatalogProducts=Object.fromEntries(products.map(product=>[product.key,product]));
+    briefProductLinks=Object.fromEntries(products.map(p=>[p.key,p.orderUrl||data.orderChannelUrl]));
+    for(const product of products){
       const card=document.getElementById(`shop-${shopIds[product.key]}`);if(!card)continue;
       card.querySelector('.shop-price strong').textContent=product.price===null?'Preis im Ticket':euro.format(product.price);
       card.querySelector('.shop-price > span').textContent=product.etaDays!==null?`ca. ${product.etaDays} Tage`:'Individuelles Angebot';
@@ -168,6 +170,8 @@ async function syncDiscord(){
       let badge=card.querySelector('.availability');if(!product.enabled&&!badge){badge=document.createElement('span');badge.className='availability';card.querySelector('.shop-label').append(badge);}if(badge){badge.textContent='Derzeit nicht verfügbar';badge.hidden=product.enabled;}
     }
     if(briefReference){const stable=window.TurboGalleryCuration?.stablePreviewId(briefReference),fresh=previews.find(p=>p.stableId===stable);if(fresh){briefReference.image=fresh.image;renderBriefReference();}}
+    updateBriefSummary();
+    document.dispatchEvent(new CustomEvent('turbo:feed',{detail:data}));
   }catch{
     const empty=document.getElementById('preview-empty');if(empty&&!previewGallery.children.length){empty.hidden=false;empty.textContent='Unsere Arbeiten findest du auch im Discord.';}
     const nveEmpty=document.getElementById('nve-empty');if(nveEmpty&&!document.getElementById('nve-gallery')?.children.length)nveEmpty.textContent='Öffne die NVE-Vorschauen im Discord.';
@@ -178,14 +182,42 @@ async function syncDiscord(){
 // Visitors choose an offer first; only an authenticated explicit action creates a ticket.
 const briefForm=document.getElementById('order-briefing'),briefProduct=document.getElementById('brief-product'),briefPlan=document.getElementById('brief-plan'),requestSend=document.getElementById('brief-send');
 const planInfo={lifetime:{label:'Lifetime',price:20},month:{label:'1 Monat',price:15},week:{label:'1 Woche',price:10}};
-let briefProductLinks={},briefReference=null,discordAccount=null,requestToken=null,requestReady=false,requestBusy=false,requestSent=false,requestAttempted=false,requestChecking=null;
-function renderBriefReference(){const box=document.getElementById('brief-reference');if(!box)return;box.hidden=!briefReference;if(briefReference){document.getElementById('brief-reference-image').src=briefReference.image;document.getElementById('brief-reference-link').href=briefReference.messageUrl;}}
+let briefProductLinks={},briefCatalogProducts={},briefReference=null,discordAccount=null,requestToken=null,requestReady=false,requestBusy=false,requestSent=false,requestAttempted=false,requestChecking=null;
+function renderBriefReference(){const box=document.getElementById('brief-reference');if(!box)return;box.hidden=!briefReference;if(briefReference){document.getElementById('brief-reference-image').src=briefReference.image;document.getElementById('brief-reference-link').href=briefReference.messageUrl;}updateBriefSummary();}
+function updateBriefSummary(){
+  if(!briefProduct)return;
+  const product=briefProduct.value,tool=product==='soundpack-tool',partnership=product==='partnership';
+  const plan=planInfo[briefPlan?.value]||planInfo.lifetime,catalog=briefCatalogProducts[product];
+  const productLabel=briefProduct.selectedOptions[0]?.textContent||'Dein Angebot';
+  const price=tool?euro.format(plan.price):typeof catalog?.price==='number'&&Number.isFinite(catalog.price)&&catalog.price>=0?euro.format(catalog.price):'Preis im Ticket';
+  const project=document.getElementById('brief-project')?.value.trim()||'';
+  const deadline=document.getElementById('brief-deadline')?.value.trim()||'Noch offen';
+  const assets=document.getElementById('brief-assets')?.value.trim()||'Noch zu besprechen';
+  const setText=(id,text)=>{const node=document.getElementById(id);if(node)node.textContent=text;};
+  setText('brief-summary-product',productLabel);
+  setText('brief-summary-plan',tool?plan.label:'');
+  const planLabel=document.getElementById('brief-summary-plan');if(planLabel)planLabel.hidden=!tool;
+  setText('brief-summary-price',price);
+  const priceBox=document.getElementById('brief-summary-price-row');if(priceBox)priceBox.hidden=partnership;
+  setText('brief-summary-price-note',partnership?'Deine Idee geht an unser Team. Wir melden uns im Discord.':tool?'Deinen Zugang richten wir im Ticket mit dir ein.':'Umfang, Preis und Termin bestätigen wir gemeinsam im Ticket.');
+  setText('brief-summary-project',project||'Beschreibe kurz deine Idee oder deinen Bestellwunsch.');
+  setText('brief-summary-deadline',deadline);
+  setText('brief-summary-assets',assets);
+  const referenceRow=document.getElementById('brief-summary-reference-row');if(referenceRow)referenceRow.hidden=!briefReference;
+  const referenceLink=document.getElementById('brief-summary-reference');if(referenceLink&&briefReference)referenceLink.href=briefReference.messageUrl;
+  const output=document.getElementById('brief-output'),copy=document.getElementById('brief-copy');
+  if(output)output.value=[`Produkt: ${productLabel}`,...(tool?[`Laufzeit: ${plan.label}`]:[]),...(!partnership?[`Preis: ${price}`]:[]),'',project,`Wunschtermin: ${deadline}`,`Materialien: ${assets}`,...(briefReference?[`Stilreferenz: ${briefReference.messageUrl}`]:[])].join('\n');
+  if(copy)copy.disabled=!project;
+}
 function updateToolPlan(plan){
-  if(!Object.hasOwn(planInfo,plan))return;const info=planInfo[plan];
+  if(requestBusy||!Object.hasOwn(planInfo,plan))return;const info=planInfo[plan];
   document.querySelectorAll('[data-tool-plan]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.toolPlan===plan)));
   const price=document.getElementById('soundpack-selected-price'),label=document.getElementById('soundpack-selected-plan'),order=document.getElementById('soundpack-order');
   if(price)price.textContent=`${info.price} €`;if(label)label.textContent=info.label;if(order)order.dataset.orderPlan=plan;
   if(briefPlan)briefPlan.value=plan;
+  const project=document.getElementById('brief-project');
+  if(briefProduct?.value==='soundpack-tool'&&project&&/^Ich möchte das Soundpack Tool mit der Laufzeit (Lifetime|1 Monat|1 Woche) bestellen\.$/.test(project.value.trim()))project.value=`Ich möchte das Soundpack Tool mit der Laufzeit ${info.label} bestellen.`;
+  updateBriefSummary();
 }
 const briefHints={thumbnail:'Nenne Videotitel, Motiv und gewünschten Text.',nve:'Welche Lichtstimmung und welchen Look möchtest du?',soundpack:'Welche Sounds möchtest du für dein Setup?',grafik:'Nenne Format, Stil, Text und vorhandene Materialien.',fivem:'Welche Art von Asset brauchst du? Die Verfügbarkeit klären wir im Ticket.',bot:'Beschreibe die gewünschten Funktionen für deine Community.',bundle:'Welche Designs sollen in deinem Paket enthalten sein?','soundpack-tool':'Wähle deine Laufzeit. Kauf und Zugang klären wir in deinem Bestellticket.',partnership:'Erzähl uns von deinem Projekt, eurer Community und deiner Idee für eine Zusammenarbeit.'};
 function updateBriefProduct(){
@@ -196,6 +228,7 @@ function updateBriefProduct(){
   if(product!=='thumbnail'&&briefReference){briefReference=null;renderBriefReference();}
   const finalStep=document.querySelector('.request-steps li:last-child');
   if(finalStep){finalStep.querySelector('strong').textContent=product==='partnership'?'Partnerschaft anfragen':'Bestellticket öffnen';finalStep.querySelector('p').textContent=product==='partnership'?'Deine Idee an unser Team senden.':'Details mit uns im privaten Ticket abstimmen.';}
+  updateBriefSummary();
   updateRequestButton();
 }
 function chooseBriefProduct(key){
@@ -220,6 +253,7 @@ function rememberLoginDraft(){
 }
 function updateRequestButton(){
   if(!requestSend)return;const partnership=briefProduct?.value==='partnership';
+  document.querySelectorAll('[data-tool-plan]').forEach(button=>button.disabled=requestBusy);
   requestSend.disabled=requestBusy||requestSent||Boolean(discordAccount&&requestChecking);
   requestSend.textContent=requestBusy?(partnership?'Deine Anfrage wird gesendet …':'Dein Ticket wird erstellt …'):requestSent?(partnership?'Anfrage gesendet ✓':'Ticket erstellt ✓'):!discordAccount?'Mit Discord anmelden ↗':requestChecking?'Bitte kurz warten …':partnership?'Partnerschaft anfragen ↗':'Bestellticket öffnen ↗';
   requestSend.setAttribute('aria-busy',String(requestBusy||Boolean(discordAccount&&requestChecking)));
@@ -255,16 +289,22 @@ document.getElementById('discord-logout')?.addEventListener('click',async()=>{
 });
 if(briefForm){
   const output=document.getElementById('brief-output'),copy=document.getElementById('brief-copy'),status=document.getElementById('brief-status');
-  briefForm.addEventListener('submit',event=>{
-    event.preventDefault();const project=document.getElementById('brief-project').value.trim();if(!project){document.getElementById('brief-project').focus();status.textContent='Beschreibe zuerst deine Idee.';return;}
-    output.value=[`Produkt: ${briefProduct.selectedOptions[0].textContent}`,...(briefProduct.value==='soundpack-tool'?[`Laufzeit: ${planInfo[briefPlan.value].label} · ${planInfo[briefPlan.value].price} €`]:[]),'',project,`Wunschtermin: ${document.getElementById('brief-deadline').value.trim()||'Noch offen'}`,`Materialien: ${document.getElementById('brief-assets').value.trim()||'Noch zu besprechen'}`,...(briefReference?[`Stilreferenz: ${briefReference.messageUrl}`]:[])].join('\n');if(copy)copy.disabled=false;status.textContent='Deine Angaben sind vorbereitet.';
-  });
+  // The summary follows the fields automatically; a ticket still needs its explicit button action.
+  briefForm.addEventListener('submit',event=>{event.preventDefault();updateBriefSummary();});
   copy?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(output.value);status.textContent='Text kopiert.';}catch{output.focus();output.select();status.textContent='Kopiere den markierten Text mit Strg+C.';}});
-  briefForm.addEventListener('input',event=>{
+  const handleBriefChange=event=>{
     event.target?.removeAttribute?.('aria-invalid');if(event.target?.getAttribute?.('aria-describedby')==='request-status')event.target.removeAttribute('aria-describedby');
-    if(output.value){output.value='';if(copy)copy.disabled=true;status.textContent='';}
-    if(!requestBusy&&(requestSent||requestAttempted)){requestSent=false;requestAttempted=false;requestReady=false;requestToken=null;document.getElementById('request-status').textContent='';checkRequestConnection();}
-  });
+    if(status)status.textContent='';
+    updateBriefSummary();
+    if(!requestBusy&&(requestSent||requestAttempted)){
+      requestSent=false;requestAttempted=false;requestReady=false;requestToken=null;
+      const requestStatus=document.getElementById('request-status');if(requestStatus){requestStatus.textContent='';requestStatus.className='';}
+      const receipt=document.querySelector('.result-actions');if(receipt)receipt.hidden=true;
+      updateRequestButton();checkRequestConnection();
+    }
+  };
+  briefForm.addEventListener('input',handleBriefChange);
+  briefForm.addEventListener('change',handleBriefChange);
 }
 document.getElementById('brief-consent')?.addEventListener('change',event=>event.target.removeAttribute('aria-invalid'));
 requestSend?.addEventListener('click',async()=>{

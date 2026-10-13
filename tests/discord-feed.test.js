@@ -608,3 +608,50 @@ test('invalid feed envelopes fail closed instead of exposing incomplete data', t
     assert.throws(() => h.app.validFeed(feed), /Invalid feed/);
   }
 });
+
+const REVIEW_MESSAGE_URL = 'https://discord.com/channels/1531989453168578650/1550121564870025398/1550470513070178399';
+function publicReview(change = {}) {
+  return { text: 'Schnelle Umsetzung und tolles Ergebnis!', rating: 5, authorDisplayName: 'Creator.One', date: '2026-10-10T12:00:00.000Z', messageUrl: REVIEW_MESSAGE_URL, productKey: 'thumbnail', ...change };
+}
+function reviewFeed(app, reviews) { return app.validFeed({ connected: true, products: [], previews: [], reviews, reviewsAvailable: true }); }
+
+test('review feed whitelists public fields and discards private metadata', t => {
+  const h = harness(t);
+  const feed = reviewFeed(h.app, [publicReview({ orderId: 'UF-0042', userId: '697402284849627180', email: 'private@example.com', avatar: 'https://evil.invalid/avatar', accessToken: 'private-token' })]);
+  assert.deepEqual(feed.reviews, [publicReview()]);
+  assert.equal(feed.reviewsAvailable, true);
+  assert.doesNotMatch(JSON.stringify(feed.reviews), /UF-0042|697402284849627180|private-token|private@example|evil\.invalid|orderId|userId/);
+});
+
+test('review feed rejects invalid ratings, author text, timestamps and links outside the published review channel', t => {
+  const h = harness(t);
+  const invalid = [null, [], publicReview({ rating: '5' }), publicReview({ rating: 0 }), publicReview({ rating: 6 }), publicReview({ rating: 4.5 }),
+    publicReview({ authorDisplayName: '' }), publicReview({ authorDisplayName: {} }), publicReview({ text: '' }),
+    publicReview({ date: 'not-a-date' }), publicReview({ date: '2026-02-31T12:00:00.000Z' }), publicReview({ date: '2027-10-10T12:00:00.000Z' }),
+    publicReview({ messageUrl: 'https://evil.invalid/review' }), publicReview({ messageUrl: REVIEW_MESSAGE_URL + '?token=private' }),
+    publicReview({ messageUrl: REVIEW_MESSAGE_URL.replace('1531989453168578650', '9999999999999999999') }),
+    publicReview({ messageUrl: REVIEW_MESSAGE_URL.replace('1550121564870025398', '1550470565364506694') })];
+  assert.deepEqual(reviewFeed(h.app, invalid).reviews, []);
+});
+
+test('review feed uses bounded plain text, unique original links and only known product keys', t => {
+  const h = harness(t);
+  const review = publicReview({ text: '**Sehr gut!** <@697402284849627180> UF-0042 LIC-UF-0042-0001-SECRET test@example.com https://evil.invalid/?token=private <b>Danke</b> ' + 'a'.repeat(500), authorDisplayName: 'Creator'.repeat(20), productKey: 'unknown-private-field' });
+  const feed = reviewFeed(h.app, [review, review]);
+  assert.equal(feed.reviews.length, 1);
+  assert.equal(feed.reviews[0].productKey, undefined);
+  assert.ok(feed.reviews[0].text.length <= 320);
+  assert.ok(feed.reviews[0].authorDisplayName.length <= 64);
+  assert.match(feed.reviews[0].text, /^Sehr gut! Danke /);
+  assert.doesNotMatch(feed.reviews[0].text, /697402284849627180|UF-0042|LIC-|SECRET|example\.com|evil\.invalid|<|\*/);
+  const many = Array.from({ length: 18 }, (_, index) => publicReview({ messageUrl: REVIEW_MESSAGE_URL.replace(/\d+$/, String(1550470513070178400n + BigInt(index))) }));
+  assert.equal(reviewFeed(h.app, many).reviews.length, 12);
+});
+
+test('missing or malformed reviews stay empty without inventing customer feedback', t => {
+  const h = harness(t);
+  const feed = h.app.validFeed({ connected: true, products: [], previews: [] });
+  assert.deepEqual(feed.reviews, []);
+  assert.equal(feed.reviewsAvailable, false);
+  assert.deepEqual(reviewFeed(h.app, { private: 'unpublished data' }).reviews, []);
+});
