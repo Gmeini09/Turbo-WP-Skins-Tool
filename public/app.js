@@ -253,7 +253,7 @@ if (mobileRequest && 'IntersectionObserver' in window) {
     entries.forEach(entry => visibleActions.set(entry.target, entry.isIntersecting));
     mobileRequest.hidden = [...visibleActions.values()].some(Boolean);
   }, { rootMargin: '-76px 0px 0px 0px' });
-  [document.getElementById('tools'), document.getElementById('nve-compare'), document.getElementById('anfrage')]
+  [document.getElementById('start'), document.getElementById('tools'), document.getElementById('nve-compare'), document.getElementById('anfrage')]
     .filter(Boolean).forEach(element => actionObserver.observe(element));
 }
 
