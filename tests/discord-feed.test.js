@@ -102,6 +102,7 @@ function harness(t) {
       }
       if (path === '/turbo-website-requests' && call.method === 'GET') return { ready: true };
       if (path === '/turbo-website-requests' && call.method === 'POST') {
+        if (JSON.parse(call.body).product === 'partnership') return { ok: true, reference: 'WEB-A1B2C3D4', requestType: 'partnership' };
         return { ok: true, reference: 'WEB-A1B2C3D4', ticketUrl: TICKET_URL };
       }
       throw new Error(`Unexpected mocked request: ${call.method} ${path}`);
@@ -119,7 +120,8 @@ function harness(t) {
     const call = { url: String(url), ...options, method: options.method || 'GET' };
     state.calls.push(call);
     const data = await state.responseFor(call);
-    return { ok: true, status: 200, json: async () => data };
+    const status = state.statusFor ? state.statusFor(call) : 200;
+    return { ok: status >= 200 && status < 300, status, json: async () => data };
   };
   t.after(() => {
     global.fetch = saved.fetch;
@@ -438,6 +440,61 @@ test('success requires a private ticket URL from the intended server', async t =
   }
 });
 
+test('native partnership receipts confirm submission without exposing the staff inbox', async t => {
+  const h = harness(t);
+  const account = await login(h);
+  const token = await challenge(h, account.cookie);
+  h.advance(3000);
+  const defaultResponse = h.responseFor.bind(h);
+  h.responseFor = call => h.orderCalls().includes(call)
+    ? { ok: true, reference: 'WEB-A1B2C3D4', requestType: 'partnership', ticketUrl: TICKET_URL }
+    : defaultResponse(call);
+  const accepted = await invoke(h.app.handleRequests, '/api/discord-requests', {
+    method: 'POST', cookie: account.cookie, body: order(token, { product: 'partnership' }),
+  });
+  assert.equal(accepted.status, 200);
+  assert.deepEqual(accepted.json, { ok: true, reference: 'WEB-A1B2C3D4', requestType: 'partnership' });
+  h.responseFor = call => h.orderCalls().includes(call)
+    ? { ok: true, reference: 'WEB-A1B2C3D4', requestType: 'partnership' }
+    : defaultResponse(call);
+  const ordinaryOrder = await invoke(h.app.handleRequests, '/api/discord-requests', {
+    method: 'POST', cookie: account.cookie, body: order(token),
+  });
+  assert.equal(ordinaryOrder.status, 409);
+  assert.equal(ordinaryOrder.json.error, 'TICKET_UNAVAILABLE');
+  h.responseFor = call => h.orderCalls().includes(call)
+    ? { ok: true, reference: 'WEB-A1B2C3D4', ticketUrl: TICKET_URL }
+    : defaultResponse(call);
+  const missingType = await invoke(h.app.handleRequests, '/api/discord-requests', {
+    method: 'POST', cookie: account.cookie, body: order(token, { product: 'partnership' }),
+  });
+  assert.equal(missingType.status, 409);
+  assert.equal(missingType.json.error, 'TICKET_UNAVAILABLE');
+  assert.equal(missingType.json.ticketUrl, undefined);
+});
+
+test('native duplicate orders return only a verified existing ticket link', async t => {
+  const h = harness(t);
+  const account = await login(h);
+  const token = await challenge(h, account.cookie);
+  h.advance(3000);
+  const defaultResponse = h.responseFor.bind(h);
+  let existingUrl = TICKET_URL;
+  h.responseFor = call => h.orderCalls().includes(call)
+    ? { ok: false, error: 'ORDER_EXISTS', ticketUrl: existingUrl }
+    : defaultResponse(call);
+  h.statusFor = call => h.orderCalls().includes(call) ? 409 : 200;
+  for (const url of [TICKET_URL, 'https://evil.example/ticket', 'https://discord.com/channels/9999999999999999999/1550470999999999999']) {
+    existingUrl = url;
+    const response = await invoke(h.app.handleRequests, '/api/discord-requests', {
+      method: 'POST', cookie: account.cookie, body: order(token),
+    });
+    assert.equal(response.status, 409);
+    assert.equal(response.json.error, 'ORDER_EXISTS');
+    assert.equal(response.json.ticketUrl, url === TICKET_URL ? TICKET_URL : undefined);
+  }
+});
+
 test('the account order limit cannot be bypassed by changing client-supplied contact', async t => {
   const h = harness(t);
   const account = await login(h);
@@ -477,12 +534,18 @@ test('missing or short request secrets disable ordering without network calls', 
   assert.equal(h.calls.length, 0);
 });
 
-test('gallery curation excludes Thumbnail 03 and moves 01, 02 and 06 to the end', t => {
+test('gallery keeps its curated images and order while renumbering visible labels without gaps', t => {
   const h = harness(t);
   // These are the original attachment identities supplied by the existing portfolio.
   const attachmentIds = [
     '1558888753177559152', '1558518707649781832', '1558518708186521720',
     '1556760117389824010', '1556760099803107358', '1556733173210153110',
+    '1556733174845939814', '1556428632937730068', '1556369949692272800',
+    '1556078082161381466', '1556078065526767626', '1556065826765807676',
+    '1554960884281901066', '1554948098751598632', '1554948080061648906',
+    '1554891154036891679', '1554632885657665610', '1553384102839980142',
+    '1553096507534610503', '1553096459359092836', '1552799446557790219',
+    '1552636253768392764', '1552636222311112794', '1551866537672183938',
   ];
   const feed = h.app.validFeed({
     connected: true, products: [],
@@ -491,9 +554,19 @@ test('gallery curation excludes Thumbnail 03 and moves 01, 02 and 06 to the end'
       image: `https://cdn.discordapp.com/attachments/1550470150086729748/${attachment}/preview.webp?ex=changed-signature`,
     })),
   });
-  assert.deepEqual(feed.previews.map(preview => preview.label), [
-    'Thumbnail 04', 'Thumbnail 05', 'Thumbnail 01', 'Thumbnail 02', 'Thumbnail 06',
-  ]);
+  const originalOrder = [4, 5, ...Array.from({ length: 18 }, (_, index) => index + 7), 1, 2, 6];
+  assert.equal(feed.previews.length, 23);
+  assert.deepEqual(feed.previews.map(preview => preview.label),
+    Array.from({ length: 23 }, (_, index) => `Thumbnail ${String(index + 1).padStart(2, '0')}`));
+  assert.deepEqual(feed.previews.map(preview => preview.displayNumber),
+    Array.from({ length: 23 }, (_, index) => index + 1));
+  assert.deepEqual(feed.previews.map(preview => preview.originalNumber), originalOrder);
+  assert.deepEqual(feed.previews.map(preview => preview.originalLabel),
+    originalOrder.map(number => `Thumbnail ${String(number).padStart(2, '0')}`));
+  assert.deepEqual(feed.previews.map(preview => preview.stableId),
+    originalOrder.map(number => `attachment:${attachmentIds[number - 1]}`));
+  assert.deepEqual(feed.previews.map(preview => preview.image),
+    originalOrder.map(number => `https://cdn.discordapp.com/attachments/1550470150086729748/${attachmentIds[number - 1]}/preview.webp?ex=changed-signature`));
   assert.equal(feed.previews.some(preview => preview.originalNumber === 3), false);
 });
 

@@ -18,6 +18,8 @@ html[data-theme=light]{color-scheme:light;--bg:#f7f9fb;--surface:#fff;--raised:#
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.btn:hover,.shop-card:hover{transform:none}}
 
 /* Product plans and partnership enquiries */
+.tools-first{padding-top:54px}
+.tools-first .section-head{margin-bottom:28px}
 .tool-pricing{padding:0 32px 26px}
 .tool-pricing>.eyebrow{font-size:8px;letter-spacing:.13em}
 .tool-plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}

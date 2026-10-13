@@ -57,8 +57,9 @@
     return fallbackOriginals.get(String(item?.id || '')) || `preview:${String(item?.id || '')}`;
   }
 
-  function previewLabel(item) {
-    return originalLabels[stablePreviewId(item)] || 'Thumbnail';
+  function previewLabel(item, index = 0) {
+    const number = Number.isInteger(item?.displayNumber) && item.displayNumber > 0 ? item.displayNumber : index + 1;
+    return `Thumbnail ${String(number).padStart(2, '0')}`;
   }
 
   function curatePreviews(items) {
@@ -73,13 +74,16 @@
         ...item,
         stableId,
         originalNumber: originalNumbers.get(stableId) || null,
-        originalLabel: originalLabels[stableId] || null,
-        label: originalLabels[stableId] || 'Thumbnail'
+        originalLabel: originalLabels[stableId] || null
       };
       (deferredStableIds.includes(stableId) ? deferred : featured).push(curated);
     }
     deferred.sort((a, b) => deferredStableIds.indexOf(a.stableId) - deferredStableIds.indexOf(b.stableId));
-    return featured.concat(deferred);
+    return featured.concat(deferred).map((item, index) => ({
+      ...item,
+      displayNumber: index + 1,
+      label: previewLabel(null, index)
+    }));
   }
 
   return Object.freeze({

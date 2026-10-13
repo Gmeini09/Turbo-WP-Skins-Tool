@@ -194,6 +194,8 @@ function updateBriefProduct(){
   const planField=document.getElementById('brief-plan-field');if(planField)planField.hidden=product!=='soundpack-tool';
   if(product==='soundpack-tool')updateToolPlan(briefPlan?.value||'lifetime');
   if(product!=='thumbnail'&&briefReference){briefReference=null;renderBriefReference();}
+  const finalStep=document.querySelector('.request-steps li:last-child');
+  if(finalStep){finalStep.querySelector('strong').textContent=product==='partnership'?'Partnerschaft anfragen':'Bestellticket öffnen';finalStep.querySelector('p').textContent=product==='partnership'?'Deine Idee an unser Team senden.':'Details mit uns im privaten Ticket abstimmen.';}
   updateRequestButton();
 }
 function chooseBriefProduct(key){
@@ -219,7 +221,7 @@ function rememberLoginDraft(){
 function updateRequestButton(){
   if(!requestSend)return;const partnership=briefProduct?.value==='partnership';
   requestSend.disabled=requestBusy||requestSent||Boolean(discordAccount&&requestChecking);
-  requestSend.textContent=requestBusy?'Dein Ticket wird erstellt …':requestSent?'Ticket erstellt ✓':!discordAccount?'Mit Discord anmelden ↗':requestChecking?'Bitte kurz warten …':partnership?'Partnerschaftsticket öffnen ↗':'Bestellticket öffnen ↗';
+  requestSend.textContent=requestBusy?(partnership?'Deine Anfrage wird gesendet …':'Dein Ticket wird erstellt …'):requestSent?(partnership?'Anfrage gesendet ✓':'Ticket erstellt ✓'):!discordAccount?'Mit Discord anmelden ↗':requestChecking?'Bitte kurz warten …':partnership?'Partnerschaft anfragen ↗':'Bestellticket öffnen ↗';
   requestSend.setAttribute('aria-busy',String(requestBusy||Boolean(discordAccount&&requestChecking)));
 }
 async function checkRequestConnection(){
@@ -271,21 +273,33 @@ requestSend?.addEventListener('click',async()=>{
   const status=document.getElementById('request-status'),project=document.getElementById('brief-project'),consent=document.getElementById('brief-consent');
   const error=(message,field)=>{status.className='request-error';status.textContent=message;if(field){field.setAttribute('aria-invalid','true');field.setAttribute('aria-describedby','request-status');field.focus();}};
   if(!project.value.trim())return error('Beschreibe kurz deine Idee oder deinen Bestellwunsch.',project);
-  if(!consent.checked)return error('Bestätige, dass du deine Angaben für das Ticket senden möchtest.',consent);
+  if(!consent.checked)return error('Bestätige, dass du deine Angaben senden möchtest.',consent);
   if(!requestReady){await checkRequestConnection();if(!requestReady)return error('Dein Ticket konnte noch nicht geöffnet werden. Versuche es erneut.');}
   const payload={token:requestToken,product:briefProduct.value,...(briefProduct.value==='soundpack-tool'?{plan:briefPlan.value}:{}),project:project.value.trim(),deadline:document.getElementById('brief-deadline').value.trim(),assets:document.getElementById('brief-assets').value.trim(),consent:true,reference:briefReference?.messageUrl||'',website:document.getElementById('brief-website').value};
   requestBusy=true;requestAttempted=true;updateRequestButton();
   const locked=[...briefForm.querySelectorAll('input,select,textarea,button'),consent,document.getElementById('discord-logout')].filter(Boolean).map(field=>({field,disabled:field.disabled}));locked.forEach(x=>x.field.disabled=true);
-  let ticketWindow;try{ticketWindow=window.open('about:blank','_blank');if(ticketWindow){ticketWindow.opener=null;ticketWindow.document.title='Dein Discord-Ticket';ticketWindow.document.body.textContent='Dein Ticket wird geöffnet …';}}catch{}
-  status.className='';status.textContent='Dein Ticket wird erstellt …';
+  let ticketWindow;try{if(payload.product!=='partnership')ticketWindow=window.open('about:blank','_blank');if(ticketWindow){ticketWindow.opener=null;ticketWindow.document.title='Dein Discord-Ticket';ticketWindow.document.body.textContent='Dein Ticket wird geöffnet …';}}catch{}
+  status.className='';status.textContent=payload.product==='partnership'?'Deine Anfrage wird gesendet …':'Dein Ticket wird erstellt …';
   try{
     const response=await fetch('/api/discord-requests',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(25000)}),data=await response.json();
     if(!response.ok||data.ok!==true){
       if(data.error==='AUTH_REQUIRED'){discordAccount=null;requestReady=false;await loadDiscordAccount();throw new Error('Melde dich erneut mit Discord an.');}
       if(data.error==='JOIN_REQUIRED'){const link=document.getElementById('brief-discord');link.href='https://discord.gg/turbodesigns';link.textContent='Turbo Designs Discord beitreten ↗';link.parentElement.hidden=false;document.getElementById('brief-copy').hidden=true;throw new Error('Tritt zuerst unserem Discord bei und öffne dein Ticket danach erneut.');}
       if(data.error==='RATE_LIMIT')throw new Error('Du hast bereits mehrere Tickets geöffnet. Warte bitte etwas.');
+      if(data.error==='ORDER_BUSY')throw new Error('Deine Bestellung wird bereits erstellt. Bitte warte kurz und versuche es erneut.');
+      if(data.error==='ORDER_CLOSED')throw new Error('Dieses Bestellticket wurde bereits geschlossen. Ändere deine Angaben, um eine neue Bestellung anzufragen.');
+      if(data.error==='ORDER_EXISTS'){
+        if(/^https:\/\/discord\.com\/channels\/1531989453168578650\/\d{17,20}$/.test(data.ticketUrl||'')){const link=document.getElementById('brief-discord');link.href=data.ticketUrl;link.textContent='Bestehendes Bestellticket öffnen ↗';link.parentElement.hidden=false;document.getElementById('brief-copy').hidden=true;}
+        throw new Error('Du hast bereits ein offenes Bestellticket. Besprich deine weitere Bestellung dort mit uns.');
+      }
+      if(data.error==='SHOP_CLOSED')throw new Error('Wir nehmen gerade keine neuen Bestellungen an. Versuche es später erneut.');
+      if(data.error==='PRODUCT_UNAVAILABLE')throw new Error('Dieses Angebot ist gerade nicht verfügbar. Wähle ein anderes Produkt.');
+      if(data.error==='BLACKLISTED')throw new Error('Deine Anfrage konnte nicht angenommen werden. Wende dich an unseren Support.');
       if(data.error==='EXPIRED_TOKEN'){await checkRequestConnection();throw new Error('Versuche es erneut. Deine Angaben sind erhalten.');}
       throw new Error('Dein Ticket konnte nicht geöffnet werden. Versuche es erneut.');
+    }
+    if(payload.product==='partnership'&&data.requestType==='partnership'){
+      requestSent=true;status.className='request-success';status.textContent='Deine Partnerschaftsanfrage wurde gesendet. Unser Team meldet sich im Discord bei dir.';document.querySelector('.result-actions').hidden=true;return;
     }
     if(!/^https:\/\/discord\.com\/channels\/1531989453168578650\/\d{17,20}$/.test(data.ticketUrl||''))throw new Error('Dein Ticket konnte nicht geöffnet werden. Versuche es erneut.');
     requestSent=true;status.className='request-success';status.textContent='Dein privates Ticket ist geöffnet.';

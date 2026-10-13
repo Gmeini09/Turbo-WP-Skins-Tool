@@ -8,6 +8,7 @@ const SITE_ORIGIN = 'https://turbodesigns.net';
 const CALLBACK = `${SITE_ORIGIN}/auth/discord/callback`;
 const PRODUCTS = new Set(['thumbnail','nve','soundpack','grafik','fivem','bot','bundle','soundpack-tool','partnership']);
 const TOOL_PLANS = Object.freeze({ week:10, month:15, lifetime:20 });
+const validTicketUrl = value => /^https:\/\/discord\.com\/channels\/1531989453168578650\/\d{17,20}$/.test(value || '');
 const secret = () => process.env.WEBSITE_REQUEST_SECRET;
 const secretReady = () => typeof secret() === 'string' && secret().length >= 32;
 let cache, pending, retryAt = 0, authCache, authPending;
@@ -51,7 +52,8 @@ async function botRequest(method,data,route='/turbo-website-requests') {
   const result = await response.json().catch(()=>({}));
   if (!response.ok) {
     const error = new Error('UNAVAILABLE');
-    if (['JOIN_REQUIRED','TICKET_UNAVAILABLE','AUTH_REQUIRED','RATE_LIMIT','AUTH_FAILED'].includes(result.error)) error.code=result.error;
+    if (['JOIN_REQUIRED','TICKET_UNAVAILABLE','AUTH_REQUIRED','RATE_LIMIT','AUTH_FAILED','ORDER_EXISTS','ORDER_BUSY','ORDER_CLOSED','SHOP_CLOSED','PRODUCT_UNAVAILABLE','BLACKLISTED'].includes(result.error)) error.code=result.error;
+    if (error.code==='ORDER_EXISTS' && validTicketUrl(result.ticketUrl)) error.ticketUrl=result.ticketUrl;
     throw error;
   }
   return result;
@@ -179,12 +181,17 @@ async function handleRequests(req,res) {
     if (!retry && (limit.ids.size>=3 || globalRequests.length>=30)) return reply(429,{ok:false,error:'RATE_LIMIT'});
     if (!retry) { limit.ids.add(requestId);requestLimits.set(account.id,limit);globalRequests.push({at:now,id:requestId}); }
     const result=await botRequest('POST',{...data,requestId,contact:account.username,discordUserId:account.id});
-    if (result.ok!==true || !/^WEB-[A-F0-9]{8}$/.test(result.reference || '') || !/^https:\/\/discord\.com\/channels\/1531989453168578650\/\d{17,20}$/.test(result.ticketUrl || '')) throw new Error('TICKET_UNAVAILABLE');
+    if (result.ok!==true || !/^WEB-[A-F0-9]{8}$/.test(result.reference || '')) throw new Error('TICKET_UNAVAILABLE');
+    if (data.product==='partnership') {
+      if (result.requestType!=='partnership') throw new Error('TICKET_UNAVAILABLE');
+      return reply(200,{ok:true,reference:result.reference,requestType:'partnership'});
+    }
+    if (!validTicketUrl(result.ticketUrl)) throw new Error('TICKET_UNAVAILABLE');
     return reply(200,{ok:true,reference:result.reference,ticketUrl:result.ticketUrl});
   } catch (error) {
     const invalid=error.message==='INVALID_REQUEST' || error instanceof SyntaxError;
     const code=error.code || (invalid?'INVALID_REQUEST':error.message==='EXPIRED_TOKEN'?'EXPIRED_TOKEN':error.message==='TICKET_UNAVAILABLE'?'TICKET_UNAVAILABLE':'UNAVAILABLE');
-    return reply(invalid?400:code==='AUTH_REQUIRED'?401:code==='RATE_LIMIT'?429:['JOIN_REQUIRED','TICKET_UNAVAILABLE','EXPIRED_TOKEN'].includes(code)?409:503,{ok:false,error:code});
+    return reply(invalid?400:code==='AUTH_REQUIRED'?401:code==='RATE_LIMIT'?429:['JOIN_REQUIRED','TICKET_UNAVAILABLE','EXPIRED_TOKEN','ORDER_EXISTS','ORDER_BUSY','ORDER_CLOSED','SHOP_CLOSED','PRODUCT_UNAVAILABLE','BLACKLISTED'].includes(code)?409:503,{ok:false,error:code,...(code==='ORDER_EXISTS' && validTicketUrl(error.ticketUrl)?{ticketUrl:error.ticketUrl}:{})});
   }
 }
 module.exports={getFeed,validFeed,validateWebsiteRequest,handleRequests,handleAuth,readAccount,TOOL_PLANS};
