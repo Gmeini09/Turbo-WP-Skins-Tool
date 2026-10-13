@@ -1,50 +1,174 @@
-/* Compact checkout, scoped to the request section. */
-#anfrage .checkout-layout{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:start;gap:26px}
-#anfrage .checkout-account{display:flex;align-items:center;gap:12px;padding:19px 28px}
-#anfrage .checkout-account p{flex:1;margin:0;font-size:11px;line-height:1.7}
-#anfrage .checkout-account-icon{display:grid;place-items:center;width:30px;height:30px;flex-shrink:0;border:1px solid var(--line);border-radius:50%;color:var(--accent);font-size:15px}
+/* Checkout layout and readable controls. Colors follow the shared theme. */
+#anfrage .checkout-layout {
+  grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:start;gap:28px;
+}
+#anfrage .briefing-panel,#anfrage .checkout-summary {
+  min-width:0;border:1px solid var(--line);border-radius:18px;
+}
+#anfrage .briefing-panel{background:var(--surface)}
+#anfrage .panel-head{padding:20px 28px;font-size:12px;line-height:1.5}
+#anfrage .panel-head>span:first-child{letter-spacing:.08em}
+#anfrage .checkout-account {
+  display:flex;align-items:center;gap:14px;padding:20px 28px;background:var(--tint);
+}
+#anfrage .checkout-account p {
+  flex:1;min-width:0;margin:0;font-size:14px;line-height:1.6;overflow-wrap:anywhere;
+}
+#anfrage .checkout-account-icon {
+  display:grid;place-items:center;width:36px;height:36px;flex-shrink:0;
+  border:1px solid var(--line);border-radius:50%;color:var(--accent);font-size:18px;
+}
 #anfrage .checkout-account .text-button{flex-shrink:0}
-#anfrage #order-briefing>label{font-size:12px;margin-bottom:20px}
-#anfrage #order-briefing textarea{min-height:140px;font-size:13px}
-#anfrage #brief-product-hint{font-size:10px;margin-top:-10px;margin-bottom:22px}
-#anfrage .checkout-extras{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:22px}
-#anfrage .checkout-extras>summary{display:flex;align-items:center;gap:10px;padding:17px 0;cursor:pointer;list-style:none;font-size:12px;font-weight:550}
+#anfrage #order-briefing{padding:28px}
+#anfrage #order-briefing label {
+  font-size:14px;font-weight:600;line-height:1.5;margin-bottom:22px;
+}
+#anfrage #order-briefing label>span{font-size:13px}
+#anfrage #order-briefing input:not([type=hidden]),
+#anfrage #order-briefing select,#anfrage #order-briefing textarea {
+  min-height:48px;padding:12px 14px;margin-top:9px;border-radius:10px;
+  font-size:14px;line-height:1.6;
+}
+#anfrage #order-briefing input[type=hidden]{display:none}
+#anfrage #order-briefing select{padding-right:32px}
+#anfrage #order-briefing textarea{min-height:148px}
+#anfrage #brief-product-hint{font-size:13px;line-height:1.65;margin:-10px 0 24px}
+#anfrage .checkout-extras {
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:24px;
+}
+#anfrage .checkout-extras>summary {
+  display:flex;align-items:center;gap:10px;min-height:54px;padding:14px 0;
+  cursor:pointer;list-style:none;font-size:14px;font-weight:600;line-height:1.5;
+}
 #anfrage .checkout-extras>summary::-webkit-details-marker{display:none}
-#anfrage .checkout-extras>summary>span{font-size:10px;font-weight:400;color:var(--muted)}
-#anfrage .checkout-extras>summary>b{margin-left:auto;font-size:18px;font-weight:400;color:var(--muted)}
+#anfrage .checkout-extras>summary>span{font-size:13px;font-weight:400;color:var(--muted)}
+#anfrage .checkout-extras>summary>b{margin-left:auto;font-size:22px;font-weight:400;color:var(--muted)}
 #anfrage .checkout-extras[open]>summary>b{transform:rotate(45deg)}
-#anfrage .checkout-extras>.form-row{padding-top:4px}
-#anfrage .checkout-extras label{font-size:11px;margin-bottom:19px}
-#anfrage .checkout-draft-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
-#anfrage .checkout-draft-row>span{color:var(--muted);font-size:9px;line-height:1.6}
-#anfrage .checkout-draft-row .text-button{font-size:10px;white-space:nowrap}
-#anfrage .checkout-summary{position:sticky;top:100px;padding:27px}
-#anfrage .checkout-summary>h3{font-size:28px;letter-spacing:-.035em;line-height:1.2;margin:12px 0 24px}
-#anfrage .checkout-summary-main{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
-#anfrage .checkout-summary-main h4{font-size:18px;font-weight:550;line-height:1.35;letter-spacing:-.02em;margin:0}
-#anfrage #brief-summary-plan{display:inline-block;margin-top:6px;color:var(--accent);font-size:10px}
-#anfrage #brief-summary-price{display:block;text-align:right;font-size:19px;font-weight:550;white-space:nowrap;line-height:1.4;letter-spacing:-.02em}
-#anfrage .checkout-price-note{color:var(--muted);font-size:10px;line-height:1.8;margin:13px 0 20px}
-#anfrage .checkout-summary-details{border-block:1px solid var(--line);margin:0;padding:16px 0;display:grid;gap:13px}
-#anfrage .checkout-summary-details>div{display:grid;grid-template-columns:95px minmax(0,1fr);gap:15px;align-items:start}
-#anfrage .checkout-summary-details dt{font-size:10px;color:var(--muted);line-height:1.75}
-#anfrage .checkout-summary-details dd{font-size:11px;line-height:1.7;overflow-wrap:anywhere;margin:0;white-space:pre-wrap}
-#anfrage .checkout-summary-details .checkout-summary-idea{grid-template-columns:1fr;gap:5px}
-#anfrage .checkout-summary-idea dd{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden}
-#anfrage .checkout-summary-details a{color:var(--accent);font-size:10px;text-decoration:underline;text-underline-offset:3px}
-#anfrage .checkout-steps{grid-template-columns:1fr 1fr;gap:15px;margin:20px 0 0}
-#anfrage .checkout-steps li{gap:9px}
-#anfrage .checkout-steps li>span{font-size:8px;padding:5px;margin-top:1px}
-#anfrage .checkout-steps strong{font-size:10px;line-height:1.5}
-#anfrage .checkout-steps p{font-size:9px;line-height:1.7}
-#anfrage .checkout-summary .direct-request{margin-top:21px;padding-top:20px}
-#anfrage .checkout-summary .consent{font-size:10px;line-height:1.8}
-#anfrage .checkout-summary .direct-request>.btn{min-height:47px;margin-top:16px;font-size:12px}
-#anfrage .checkout-summary #request-status{font-size:10px;margin-top:12px;line-height:1.8}
+#anfrage .checkout-extras>.form-row{gap:18px;padding-top:8px}
+#anfrage .checkout-extras label{margin-bottom:20px}
+#anfrage .checkout-draft-row {
+  display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px;
+}
+#anfrage .checkout-draft-row>span{color:var(--muted);font-size:13px;line-height:1.6}
+#anfrage .text-button {
+  min-width:44px;min-height:44px;padding:10px 8px;font-size:13px;line-height:1.5;
+  border-radius:8px;color:var(--muted);
+}
+#anfrage .text-button:hover{color:var(--text);background:var(--raised)}
+#anfrage .checkout-draft-row .text-button{flex-shrink:0;white-space:nowrap}
+#anfrage .brief-reference {
+  gap:14px;padding:14px;margin-bottom:24px;border-radius:12px;font-size:13px;line-height:1.5;
+}
+#anfrage .brief-reference img{width:80px;height:48px;flex-shrink:0;border-radius:7px}
+#anfrage .brief-reference>div{min-width:0}
+#anfrage .brief-reference strong{font-size:13px}
+#anfrage .brief-reference a{display:inline-flex;align-items:center;min-height:44px;font-size:13px}
+#anfrage .checkout-summary {
+  position:sticky;top:108px;padding:28px;background:var(--tint);
+}
+#anfrage .checkout-summary>.eyebrow{font-size:12px;letter-spacing:.08em}
+#anfrage .checkout-summary>h3 {
+  font-size:30px;letter-spacing:-.035em;line-height:1.2;margin:12px 0 26px;
+}
+#anfrage .checkout-summary-main {
+  display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;
+}
+#anfrage .checkout-summary-main>div{min-width:0}
+#anfrage .checkout-summary-main h4 {
+  font-size:20px;font-weight:600;line-height:1.35;letter-spacing:-.02em;margin:0;
+}
+#anfrage #brief-summary-plan{display:inline-block;margin-top:6px;color:var(--accent);font-size:14px;line-height:1.5}
+#anfrage #brief-summary-price {
+  display:block;text-align:right;font-size:23px;font-weight:650;white-space:nowrap;
+  line-height:1.4;letter-spacing:-.02em;
+}
+#anfrage .checkout-price-note{color:var(--muted);font-size:14px;line-height:1.65;margin:14px 0 22px}
+#anfrage .checkout-summary-details {
+  border-block:1px solid var(--line);margin:0;padding:20px 0;display:grid;gap:16px;
+}
+#anfrage .checkout-summary-details>div {
+  display:grid;grid-template-columns:100px minmax(0,1fr);gap:16px;align-items:start;
+}
+#anfrage .checkout-summary-details dt{font-size:13px;color:var(--muted);line-height:1.65}
+#anfrage .checkout-summary-details dd {
+  font-size:14px;line-height:1.65;overflow-wrap:anywhere;margin:0;white-space:pre-wrap;
+}
+#anfrage .checkout-summary-details .checkout-summary-idea{grid-template-columns:1fr;gap:6px}
+#anfrage .checkout-summary-idea dd {
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden;
+}
+#anfrage .checkout-summary-details a {
+  display:inline-flex;align-items:center;min-height:44px;color:var(--accent);
+  font-size:14px;text-decoration:underline;text-underline-offset:3px;
+}
+#anfrage .checkout-steps{grid-template-columns:1fr 1fr;gap:16px;margin:22px 0 0}
+#anfrage .checkout-steps li{gap:10px;min-width:0}
+#anfrage .checkout-steps li>span {
+  font-size:11px;line-height:1.5;padding:6px;margin-top:1px;border-radius:7px;
+}
+#anfrage .checkout-steps strong{font-size:13px;line-height:1.5}
+#anfrage .checkout-steps p{font-size:14px;line-height:1.6;margin-top:4px}
+#anfrage .checkout-summary .direct-request{margin-top:24px;padding-top:22px}
+#anfrage .checkout-summary .consent {
+  min-height:44px;gap:12px;font-size:14px;line-height:1.65;cursor:pointer;
+}
+#anfrage .checkout-summary .consent input{width:20px;height:20px;margin-top:2px;border-radius:5px}
+#anfrage .checkout-summary .consent a{text-underline-offset:3px}
+#anfrage .checkout-summary .direct-request>.btn {
+  min-height:50px;margin-top:20px;padding:13px 18px;border-radius:10px;font-size:14px;line-height:1.5;
+}
+#anfrage .checkout-summary #request-status {
+  font-size:14px;margin-top:14px;line-height:1.65;overflow-wrap:anywhere;
+}
 #anfrage .checkout-summary #request-status:empty{margin:0}
-#anfrage .checkout-receipt{margin-top:18px;padding:13px 15px;background:var(--surface);border:1px solid var(--line);border-radius:7px}
-#anfrage .checkout-receipt .text-link{font-size:11px;line-height:1.7}
-#anfrage :is(summary,a,button):focus-visible{outline:2px solid var(--accent);outline-offset:4px}
-@media(max-width:900px){#anfrage .checkout-layout{grid-template-columns:1fr;gap:20px}#anfrage .checkout-summary{position:static}#anfrage .checkout-summary-main h4{font-size:20px}#anfrage #brief-summary-price{font-size:22px}#anfrage .checkout-summary-idea dd{-webkit-line-clamp:5}}
-@media(max-width:640px){#anfrage .checkout-account{padding:17px 20px;gap:10px}#anfrage .checkout-account p{font-size:10px}#anfrage .checkout-summary{padding:24px 20px}#anfrage .checkout-summary>h3{font-size:26px;margin-bottom:21px}#anfrage .checkout-summary-main{gap:12px}#anfrage .checkout-summary-main h4{font-size:17px}#anfrage #brief-summary-price{font-size:18px}#anfrage .checkout-price-note{font-size:10px}#anfrage .checkout-summary-details>div{grid-template-columns:88px minmax(0,1fr);gap:12px}#anfrage .checkout-summary-details .checkout-summary-idea{grid-template-columns:1fr;gap:5px}#anfrage .checkout-summary-details dd{font-size:12px}#anfrage .checkout-steps{gap:13px}#anfrage .checkout-steps strong{font-size:10px}#anfrage .checkout-steps p{font-size:9px}#anfrage .checkout-draft-row>span{font-size:9px;max-width:160px}#anfrage .checkout-extras>.form-row{grid-template-columns:1fr}#anfrage .checkout-summary .direct-request>.btn{min-height:49px}}
-@media(prefers-reduced-motion:reduce){#anfrage .checkout-extras>summary>b{transition:none}}
+#anfrage .checkout-receipt {
+  margin-top:20px;padding:8px 14px;background:var(--surface);
+  border:1px solid var(--line);border-radius:12px;
+}
+#anfrage .checkout-receipt .text-link {
+  display:inline-flex;align-items:center;min-height:44px;font-size:14px;line-height:1.6;
+}
+#anfrage :is(summary,a,button,input,select,textarea):focus-visible {
+  outline:2px solid var(--accent);outline-offset:4px;
+}
+@media(max-width:1100px) {
+  #anfrage .checkout-layout{gap:22px}
+  #anfrage .checkout-summary{padding:24px}
+  #anfrage .checkout-summary-main{gap:12px}
+  #anfrage .checkout-steps{grid-template-columns:1fr;gap:14px}
+}
+@media(max-width:900px) {
+  #anfrage .checkout-layout{grid-template-columns:1fr;gap:22px}
+  #anfrage .checkout-summary{position:static;padding:28px}
+  #anfrage .checkout-summary-main h4{font-size:22px}
+  #anfrage #brief-summary-price{font-size:25px}
+  #anfrage .checkout-steps{grid-template-columns:1fr 1fr;gap:20px}
+}
+@media(max-width:640px) {
+  #anfrage .panel-head{padding:18px 20px}
+  #anfrage .checkout-account{padding:18px 20px;gap:12px;flex-wrap:wrap}
+  #anfrage .checkout-account p{flex-basis:calc(100% - 50px)}
+  #anfrage .checkout-account .text-button{margin-left:48px}
+  #anfrage #order-briefing{padding:24px 20px}
+  #anfrage #order-briefing input:not([type=hidden]),
+  #anfrage #order-briefing select,#anfrage #order-briefing textarea{font-size:16px}
+  #anfrage .checkout-summary{padding:24px 20px}
+  #anfrage .checkout-summary>h3{font-size:27px;margin-bottom:24px}
+  #anfrage .checkout-summary-main{gap:12px}
+  #anfrage .checkout-summary-main h4{font-size:20px}
+  #anfrage #brief-summary-price{font-size:22px}
+  #anfrage .checkout-summary-details>div{grid-template-columns:98px minmax(0,1fr);gap:14px}
+  #anfrage .checkout-summary-details .checkout-summary-idea{grid-template-columns:1fr;gap:6px}
+  #anfrage .checkout-steps{grid-template-columns:1fr;gap:16px}
+  #anfrage .checkout-draft-row{align-items:flex-start;gap:10px}
+  #anfrage .checkout-draft-row>span{max-width:170px;padding-top:10px}
+  #anfrage .checkout-draft-row .text-button{padding-inline:6px}
+  #anfrage .checkout-extras>.form-row{grid-template-columns:1fr;gap:0}
+  #anfrage .brief-reference{flex-wrap:wrap;gap:12px}
+  #anfrage .brief-reference>div{flex:1;min-width:120px}
+  #anfrage .brief-reference>.text-button{margin-left:92px}
+  #anfrage .checkout-summary .direct-request>.btn{min-height:52px}
+}
+@media(prefers-reduced-motion:reduce) {
+  #anfrage .checkout-extras>summary>b{transition:none}
+}

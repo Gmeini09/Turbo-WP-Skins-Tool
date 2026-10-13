@@ -20,7 +20,7 @@ document.addEventListener('keydown', event => {
 document.addEventListener('click', event => {
   if (!event.target.closest('.site-header')) closeMenu();
 });
-window.matchMedia('(min-width: 901px)').addEventListener('change', event => {
+window.matchMedia('(min-width: 1061px)').addEventListener('change', event => {
   if (event.matches) closeMenu();
 });
 
@@ -246,7 +246,16 @@ document.querySelectorAll('[data-order-product]').forEach(link=>link.addEventLis
 viewer?.querySelector('#viewer-reference')?.addEventListener('click',()=>{const item=previews[selectedPreview];returnFocus=document.getElementById('brief-project');viewer.close();selectBriefReference(item);});
 document.getElementById('brief-reference-remove')?.addEventListener('click',()=>{if(requestBusy)return;briefReference=null;renderBriefReference();briefForm?.dispatchEvent(new Event('input',{bubbles:true}));});
 briefProduct?.addEventListener('change',updateBriefProduct);briefPlan?.addEventListener('change',()=>updateToolPlan(briefPlan.value));
-const mobileRequest=document.querySelector('.mobile-request');if(mobileRequest&&document.getElementById('anfrage')&&'IntersectionObserver' in window)new IntersectionObserver(entries=>{mobileRequest.hidden=entries.some(e=>e.isIntersecting);},{rootMargin:'-82px 0px 0px 0px'}).observe(document.getElementById('anfrage'));
+const mobileRequest = document.querySelector('.mobile-request');
+if (mobileRequest && 'IntersectionObserver' in window) {
+  const visibleActions = new Map();
+  const actionObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => visibleActions.set(entry.target, entry.isIntersecting));
+    mobileRequest.hidden = [...visibleActions.values()].some(Boolean);
+  }, { rootMargin: '-76px 0px 0px 0px' });
+  [document.getElementById('tools'), document.getElementById('nve-compare'), document.getElementById('anfrage')]
+    .filter(Boolean).forEach(element => actionObserver.observe(element));
+}
 
 function rememberLoginDraft(){
   if(!briefProduct)return;try{sessionStorage.setItem('turbo-login-draft',JSON.stringify({at:Date.now(),product:briefProduct.value,plan:briefPlan?.value||'lifetime',project:document.getElementById('brief-project').value,deadline:document.getElementById('brief-deadline').value,assets:document.getElementById('brief-assets').value,reference:briefReference}));}catch{}
